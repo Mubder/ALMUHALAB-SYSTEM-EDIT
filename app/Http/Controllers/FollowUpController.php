@@ -14,7 +14,7 @@ class FollowUpController extends Controller
         $data = $request->validate([
             'title'               => 'required|string|max:255',
             'description'         => 'nullable|string|max:2000',
-            'status_type'         => 'required|string|in:' . implode(',', array_keys(FollowUp::STATUS_TYPES)),
+            'status_type'         => 'required|string|in:' . implode(',', array_keys(FollowUp::statusTypes())),
             'scheduled_at'        => 'nullable|date',
             'is_visible_to_client'=> 'boolean',
             'extra_data'          => 'nullable|array',
@@ -52,7 +52,7 @@ class FollowUpController extends Controller
         $data = $request->validate([
             'title'               => 'required|string|max:255',
             'description'         => 'nullable|string|max:2000',
-            'status_type'         => 'required|string|in:' . implode(',', array_keys(FollowUp::STATUS_TYPES)),
+            'status_type'         => 'required|string|in:' . implode(',', array_keys(FollowUp::statusTypes())),
             'scheduled_at'        => 'nullable|date',
             'is_visible_to_client'=> 'boolean',
         ]);

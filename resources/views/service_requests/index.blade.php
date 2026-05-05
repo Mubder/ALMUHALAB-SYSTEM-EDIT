@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('title','Service Requests')
 
 @section('content')
@@ -38,22 +37,130 @@
     </div>
 </div>
 
-{{-- Header --}}
+{{-- Header + New Button --}}
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <h1 class="h4 fw-bold mb-0">Service Requests</h1>
-        <p class="text-muted small mb-0">All active requests</p>
+        <p class="text-muted small mb-0">
+            @if(request()->hasAny(['search','status','service_type_id','date_from','date_to']))
+                Showing filtered results
+            @else
+                All active requests
+            @endif
+        </p>
     </div>
+    @if(auth()->user()->hasPermission('create_request'))
+    <a href="{{ route('service-requests.create') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>New Request
+    </a>
+    @endif
 </div>
 
+{{-- ── Filter Bar ──────────────────────────────────────────── --}}
+<div class="page-card mb-4 py-3">
+    <form method="GET" action="{{ route('service-requests.index') }}" class="row g-2 align-items-end">
+
+        {{-- Search --}}
+        <div class="col-12 col-md-4">
+            <label class="form-label small text-muted mb-1">
+                <i class="bi bi-search me-1"></i>Search
+            </label>
+            <input type="text" name="search" value="{{ request('search') }}"
+                   class="form-control form-control-sm"
+                   placeholder="Title, description, country…">
+        </div>
+
+        {{-- Status --}}
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted mb-1">Status</label>
+            <select name="status" class="form-select form-select-sm">
+                <option value="">All Statuses</option>
+                @foreach(['New','Under Review','Approved','Rejected','Completed'] as $s)
+                    <option value="{{ $s }}" {{ request('status') === $s ? 'selected' : '' }}>{{ $s }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Service Type --}}
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted mb-1">Service Type</label>
+            <select name="service_type_id" class="form-select form-select-sm">
+                <option value="">All Types</option>
+                @foreach($serviceTypes as $type)
+                    <option value="{{ $type->id }}" {{ request('service_type_id') == $type->id ? 'selected' : '' }}>
+                        {{ $type->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        {{-- Date From --}}
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted mb-1">From</label>
+            <input type="date" name="date_from" value="{{ request('date_from') }}"
+                   class="form-control form-control-sm">
+        </div>
+
+        {{-- Date To --}}
+        <div class="col-6 col-md-2">
+            <label class="form-label small text-muted mb-1">To</label>
+            <input type="date" name="date_to" value="{{ request('date_to') }}"
+                   class="form-control form-control-sm">
+        </div>
+
+        {{-- Buttons --}}
+        <div class="col-12 col-md-12 d-flex gap-2 mt-1">
+            <button type="submit" class="btn btn-primary btn-sm px-3">
+                <i class="bi bi-funnel me-1"></i>Apply
+            </button>
+            @if(request()->hasAny(['search','status','service_type_id','date_from','date_to']))
+                <a href="{{ route('service-requests.index') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-x-circle me-1"></i>Clear Filters
+                </a>
+                <span class="text-muted small align-self-center ms-1">
+                    {{ $items->total() }} {{ Str::plural('result', $items->total()) }} found
+                </span>
+            @endif
+        </div>
+
+    </form>
+</div>
+
+{{-- Active filter badges --}}
+@php
+    $activeFilters = array_filter([
+        'search'          => request('search'),
+        'status'          => request('status'),
+        'service_type_id' => request('service_type_id') ? $serviceTypes->find(request('service_type_id'))?->name : null,
+        'date_from'       => request('date_from') ? 'From ' . request('date_from') : null,
+        'date_to'         => request('date_to')   ? 'To ' . request('date_to')   : null,
+    ]);
+@endphp
+@if(count($activeFilters))
+<div class="d-flex flex-wrap gap-2 mb-3">
+    @foreach($activeFilters as $key => $val)
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1" style="font-size:.78rem">
+            {{ $val }}
+            <a href="{{ request()->fullUrlWithQuery([$key => null]) }}" class="text-primary ms-1 text-decoration-none">×</a>
+        </span>
+    @endforeach
+</div>
+@endif
+
+{{-- ── Results Table ────────────────────────────────────────── --}}
 @if($items->isEmpty())
     <div class="page-card text-center py-5">
-        <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
-        <h5 class="text-muted">No service requests yet</h5>
-        <p class="text-muted small">Create your first request to get started.</p>
-        <a href="{{ route('service-requests.create') }}" class="btn btn-primary mt-2">
-            <i class="bi bi-plus-lg me-1"></i>New Request
-        </a>
+        <i class="bi bi-search fs-1 text-muted d-block mb-3" style="opacity:.3"></i>
+        @if(request()->hasAny(['search','status','service_type_id','date_from','date_to']))
+            <h5 class="text-muted">No results match your filters</h5>
+            <p class="text-muted small">Try adjusting your search or <a href="{{ route('service-requests.index') }}">clear all filters</a>.</p>
+        @else
+            <h5 class="text-muted">No service requests yet</h5>
+            <p class="text-muted small">Create your first request to get started.</p>
+            <a href="{{ route('service-requests.create') }}" class="btn btn-primary mt-2">
+                <i class="bi bi-plus-lg me-1"></i>New Request
+            </a>
+        @endif
     </div>
 @else
     <div class="bg-white rounded-3 shadow-sm overflow-hidden">
@@ -62,13 +169,14 @@
                 <thead>
                     <tr class="bg-light border-bottom">
                         <th class="ps-4 text-muted fw-600 small" style="width:5%">#</th>
-                        <th class="text-muted fw-600 small" style="width:30%">TITLE</th>
-                        <th class="text-muted fw-600 small" style="width:15%">STATUS</th>
+                        <th class="text-muted fw-600 small" style="width:28%">TITLE</th>
+                        <th class="text-muted fw-600 small" style="width:12%">TYPE</th>
+                        <th class="text-muted fw-600 small" style="width:13%">STATUS</th>
                         @if($isAdmin)
                         <th class="text-muted fw-600 small" style="width:13%">SUBMITTED BY</th>
                         @endif
-                        <th class="text-muted fw-600 small" style="width:12%">DATE</th>
-                        <th class="text-muted fw-600 small pe-4" style="width:25%">ACTIONS</th>
+                        <th class="text-muted fw-600 small" style="width:11%">DATE</th>
+                        <th class="text-muted fw-600 small pe-4">ACTIONS</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,12 +196,15 @@
                             <td class="ps-4 text-muted small">{{ $rowNum }}</td>
                             <td>
                                 <a href="{{ route('service-requests.show', $item) }}"
-                                   class="text-decoration-none text-dark fw-500 stretched-link-title">
-                                    {{ Str::limit($item->title, 55) }}
+                                   class="text-decoration-none text-dark fw-500">
+                                    {{ Str::limit($item->title, 50) }}
                                 </a>
-                                @if($item->attachment_path)
-                                    <i class="bi bi-paperclip text-muted ms-1" title="Has attachment"></i>
+                                @if($item->attachments_count ?? $item->attachment_path)
+                                    <i class="bi bi-paperclip text-muted ms-1 small" title="Has attachments"></i>
                                 @endif
+                            </td>
+                            <td>
+                                <span class="text-muted small">{{ $item->serviceType->name }}</span>
                             </td>
                             <td>
                                 <span class="badge badge-status {{ $badgeClass }}">{{ $badgeLabel }}</span>
@@ -104,26 +215,29 @@
                             </td>
                             @endif
                             <td class="text-muted small">
-                                <i class="bi bi-calendar3 me-1"></i>{{ $item->created_at->format('d M Y') }}
+                                {{ $item->created_at->format('d M Y') }}
                             </td>
                             <td class="pe-4">
                                 <div class="d-flex gap-1 flex-wrap">
                                     <a href="{{ route('service-requests.show', $item) }}"
                                        class="btn btn-outline-secondary btn-action btn-sm">
-                                        <i class="bi bi-eye"></i> View
+                                        <i class="bi bi-eye"></i>
                                     </a>
+                                    @if(auth()->user()->hasPermission('edit_request') || $item->user_id === auth()->id())
                                     <a href="{{ route('service-requests.edit', $item) }}"
                                        class="btn btn-outline-primary btn-action btn-sm">
-                                        <i class="bi bi-pencil"></i> Edit
+                                        <i class="bi bi-pencil"></i>
                                     </a>
+                                    @endif
+                                    @if(auth()->user()->hasPermission('delete_request') || $item->user_id === auth()->id())
                                     <form action="{{ route('service-requests.destroy', $item) }}" method="POST"
                                           onsubmit="return confirm('Move this request to trash?');">
-                                        @csrf
-                                        @method('DELETE')
+                                        @csrf @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger btn-action btn-sm">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -132,18 +246,18 @@
             </table>
         </div>
 
-        @if($items->hasPages())
-            <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top bg-light">
-                <div class="small text-muted">
+        <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top bg-light flex-wrap gap-2">
+            <div class="small text-muted">
+                @if($items->hasPages())
                     Showing {{ $items->firstItem() }}–{{ $items->lastItem() }} of {{ $items->total() }} requests
-                </div>
+                @else
+                    {{ $items->total() }} {{ Str::plural('request', $items->total()) }}
+                @endif
+            </div>
+            @if($items->hasPages())
                 {{ $items->links('pagination::bootstrap-5') }}
-            </div>
-        @else
-            <div class="px-4 py-2 border-top bg-light small text-muted">
-                {{ $items->total() }} {{ Str::plural('request', $items->total()) }}
-            </div>
-        @endif
+            @endif
+        </div>
     </div>
 @endif
 

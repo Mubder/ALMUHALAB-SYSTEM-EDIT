@@ -39,11 +39,11 @@
                     @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Type <span class="text-danger">*</span></label>
+                    <label class="form-label">Milestone <span class="text-danger">*</span></label>
                     <select name="status_type" class="form-select @error('status_type') is-invalid @enderror" required>
-                        @foreach(\App\Models\FollowUp::STATUS_TYPES as $key => $cfg)
-                            <option value="{{ $key }}" {{ old('status_type', $followUp->status_type) === $key ? 'selected' : '' }}>
-                                {{ $cfg['label'] }}
+                        @foreach(\App\Models\MilestoneType::allActive() as $mt)
+                            <option value="{{ $mt->key }}" {{ old('status_type', $followUp->status_type) === $mt->key ? 'selected' : '' }}>
+                                {{ $mt->label }}
                             </option>
                         @endforeach
                     </select>

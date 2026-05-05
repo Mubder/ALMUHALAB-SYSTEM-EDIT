@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\RequestService;
 use App\Models\ServiceCatalog;
 use App\Models\ServiceRequest;
+use App\Notifications\ServiceStatusUpdatedNotification;
 use Illuminate\Http\Request;
 
 class RequestServiceController extends Controller
@@ -61,6 +62,12 @@ class RequestServiceController extends Controller
                 'after'  => $requestService->fresh()->toArray(),
             ],
         ]);
+
+        if ($before['status'] !== $requestService->status && $serviceRequest->user?->id) {
+            $serviceRequest->user->notify(
+                new ServiceStatusUpdatedNotification($serviceRequest, $requestService, $before['status'], auth()->user())
+            );
+        }
 
         return back()->with('success', 'Service updated.');
     }

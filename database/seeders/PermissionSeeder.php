@@ -27,6 +27,8 @@ class PermissionSeeder extends Seeder
             'update_status',
             'manage_services',
             'manage_service_catalog',
+            'manage_attachments',
+            'view_attachments',
         ];
 
         $created = collect();

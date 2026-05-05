@@ -5,39 +5,66 @@ namespace App\Http\Controllers;
 use App\Models\Attachment;
 use App\Models\ServiceRequest;
 use App\Models\ServiceType;
+use App\Models\StageServiceMapping;
 use App\Models\ActivityLog;
 use App\Http\Requests\ServiceRequestRequest;
 use Illuminate\Http\Request;
 
 class ServiceRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $user = auth()->user();
+        $user    = auth()->user();
         $isAdmin = $user->hasPermission('edit_request');
 
-        $query = ServiceRequest::orderBy('created_at', 'desc');
-
-        // Regular users see only their own requests
-        if (!$isAdmin) {
-            $query->where('user_id', $user->id);
-        }
-
-        $items = $query->paginate(15);
-
-        $statsQuery = $isAdmin
+        $baseQuery = $isAdmin
             ? ServiceRequest::query()
             : ServiceRequest::where('user_id', $user->id);
 
+        // Stats always reflect full scope (no filters)
         $stats = [
-            'total'        => (clone $statsQuery)->count(),
-            'new'          => (clone $statsQuery)->where('status', 'New')->count(),
-            'under_review' => (clone $statsQuery)->where('status', 'Under Review')->count(),
-            'approved'     => (clone $statsQuery)->where('status', 'Approved')->count(),
-            'completed'    => (clone $statsQuery)->where('status', 'Completed')->count(),
+            'total'        => (clone $baseQuery)->count(),
+            'new'          => (clone $baseQuery)->where('status', 'New')->count(),
+            'under_review' => (clone $baseQuery)->where('status', 'Under Review')->count(),
+            'approved'     => (clone $baseQuery)->where('status', 'Approved')->count(),
+            'completed'    => (clone $baseQuery)->where('status', 'Completed')->count(),
         ];
 
-        return view('service_requests.index', compact('items', 'stats', 'isAdmin'));
+        // Filtered query for the table
+        $query = (clone $baseQuery)->orderBy('created_at', 'desc');
+
+        if ($search = trim($request->input('search', ''))) {
+            $query->where(function ($q) use ($search, $isAdmin) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('client_country', 'like', "%{$search}%")
+                  ->orWhere('destination_country', 'like', "%{$search}%");
+                if ($isAdmin) {
+                    $q->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"));
+                }
+            });
+        }
+
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+
+        if ($typeId = $request->input('service_type_id')) {
+            $query->where('service_type_id', $typeId);
+        }
+
+        if ($from = $request->input('date_from')) {
+            $query->whereDate('created_at', '>=', $from);
+        }
+
+        if ($to = $request->input('date_to')) {
+            $query->whereDate('created_at', '<=', $to);
+        }
+
+        $items        = $query->with(['user', 'serviceType'])->paginate(15)->withQueryString();
+        $serviceTypes = ServiceType::where('is_active', true)->orderBy('name')->get();
+
+        return view('service_requests.index', compact('items', 'stats', 'isAdmin', 'serviceTypes'));
     }
 
     public function create()
@@ -79,7 +106,32 @@ class ServiceRequestController extends Controller
     public function show(ServiceRequest $serviceRequest)
     {
         $this->authorizeAccess($serviceRequest);
-        return view('service_requests.show', compact('serviceRequest'));
+
+        $serviceRequest->load(['attachments', 'serviceType', 'user', 'requestServices.service']);
+
+        // Determine current stage from follow-ups
+        $currentStage = $serviceRequest->followUps()
+            ->where('is_completed', false)
+            ->orderBy('scheduled_at')->orderBy('created_at')
+            ->value('status_type');
+
+        // Suggested services for this stage (not already added)
+        $addedServiceIds  = $serviceRequest->requestServices->pluck('service_catalog_id')->toArray();
+        $suggestedServices = $currentStage
+            ? StageServiceMapping::where('status_type', $currentStage)
+                ->with('service')
+                ->get()
+                ->map(fn($m) => $m->service)
+                ->filter(fn($s) => $s && $s->is_active && ! in_array($s->id, $addedServiceIds))
+                ->values()
+            : collect();
+
+        // All catalog services (for the "add any service" dropdown)
+        $allCatalogServices = \App\Models\ServiceCatalog::where('is_active', true)->orderBy('name')->get();
+
+        return view('service_requests.show', compact(
+            'serviceRequest', 'suggestedServices', 'allCatalogServices', 'currentStage'
+        ));
     }
 
     public function edit(ServiceRequest $serviceRequest)

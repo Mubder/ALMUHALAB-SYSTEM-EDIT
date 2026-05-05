@@ -3,16 +3,35 @@
 
 @php
     $actionLabels = [
-        'created'              => ['bg-success',   'bi-plus-circle',        'Created'],
-        'updated'              => ['bg-primary',   'bi-pencil',             'Updated'],
-        'deleted'              => ['bg-danger',    'bi-trash',              'Deleted'],
-        'restored'             => ['bg-info',      'bi-arrow-counterclockwise','Restored'],
-        'permanently_deleted'  => ['bg-dark',      'bi-x-octagon',          'Permanently Deleted'],
-        'follow_up_created'    => ['bg-success',   'bi-plus-circle-dotted', 'Follow-Up Added'],
-        'follow_up_updated'    => ['bg-primary',   'bi-pencil-square',      'Follow-Up Edited'],
-        'follow_up_deleted'    => ['bg-danger',    'bi-dash-circle',        'Follow-Up Removed'],
-        'follow_up_completed'  => ['bg-success',   'bi-check-circle',       'Step Completed'],
-        'follow_up_reopened'   => ['bg-warning',   'bi-arrow-repeat',       'Step Reopened'],
+        // ── Generic CRUD ──────────────────────────────────────────
+        'created'                  => ['bg-success',   'bi-plus-circle',           'Created'],
+        'updated'                  => ['bg-primary',   'bi-pencil',                'Updated'],
+        'deleted'                  => ['bg-danger',    'bi-trash',                 'Deleted'],
+        'restored'                 => ['bg-info',      'bi-arrow-counterclockwise','Restored'],
+        'permanently_deleted'      => ['bg-dark',      'bi-x-octagon',             'Permanently Deleted'],
+
+        // ── Workflow / Stage ──────────────────────────────────────
+        'stage_advanced'           => ['bg-success',   'bi-arrow-right-circle',    'Stage Advanced'],
+        'stage_returned'           => ['bg-warning',   'bi-arrow-left-circle',     'Stage Returned'],
+        'stage_force_transitioned' => ['bg-danger',    'bi-skip-forward-circle',   'Force Moved'],
+        'stage_status_changed'     => ['bg-primary',   'bi-arrow-repeat',          'Status Changed'],
+        'request_rejected'         => ['bg-danger',    'bi-x-circle',              'Rejected'],
+
+        // ── Follow-ups ────────────────────────────────────────────
+        'follow_up_created'        => ['bg-success',   'bi-plus-circle-dotted',    'Follow-Up Added'],
+        'follow_up_updated'        => ['bg-primary',   'bi-pencil-square',         'Follow-Up Edited'],
+        'follow_up_deleted'        => ['bg-danger',    'bi-dash-circle',           'Follow-Up Removed'],
+        'follow_up_completed'      => ['bg-success',   'bi-check-circle',          'Step Completed'],
+        'follow_up_reopened'       => ['bg-warning',   'bi-arrow-repeat',          'Step Reopened'],
+
+        // ── Services ─────────────────────────────────────────────
+        'service_added'            => ['bg-success',   'bi-grid-plus',             'Service Added'],
+        'service_updated'          => ['bg-primary',   'bi-grid',                  'Service Updated'],
+        'service_removed'          => ['bg-danger',    'bi-grid-x',                'Service Removed'],
+
+        // ── Attachments ───────────────────────────────────────────
+        'attachment_uploaded'      => ['bg-success',   'bi-paperclip',             'File Uploaded'],
+        'attachment_deleted'       => ['bg-danger',    'bi-paperclip',             'File Deleted'],
     ];
 
     $subjectLabels = [
@@ -159,8 +178,59 @@
     </div>
 
     @if($logs->hasPages())
-        <div class="px-4 py-3 border-top">
-            {{ $logs->links() }}
+        <div class="px-4 py-3 border-top d-flex align-items-center justify-content-between gap-3 flex-wrap">
+            <span class="text-muted" style="font-size:.8rem">
+                Showing {{ $logs->firstItem() }}–{{ $logs->lastItem() }} of {{ $logs->total() }} entries
+            </span>
+            <nav aria-label="Audit log pagination">
+                <ul class="pagination pagination-sm mb-0 gap-1">
+                    {{-- Previous --}}
+                    @if($logs->onFirstPage())
+                        <li class="page-item disabled">
+                            <span class="page-link rounded-2" style="font-size:.8rem;padding:.3rem .65rem">
+                                <i class="bi bi-chevron-left" style="font-size:.7rem"></i>
+                            </span>
+                        </li>
+                    @else
+                        <li class="page-item">
+                            <a class="page-link rounded-2" href="{{ $logs->previousPageUrl() }}"
+                               style="font-size:.8rem;padding:.3rem .65rem" aria-label="Previous">
+                                <i class="bi bi-chevron-left" style="font-size:.7rem"></i>
+                            </a>
+                        </li>
+                    @endif
+
+                    {{-- Page numbers --}}
+                    @foreach($logs->getUrlRange(max(1, $logs->currentPage() - 2), min($logs->lastPage(), $logs->currentPage() + 2)) as $page => $url)
+                        @if($page == $logs->currentPage())
+                            <li class="page-item active">
+                                <span class="page-link rounded-2" style="font-size:.8rem;padding:.3rem .65rem">{{ $page }}</span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link rounded-2" href="{{ $url }}"
+                                   style="font-size:.8rem;padding:.3rem .65rem">{{ $page }}</a>
+                            </li>
+                        @endif
+                    @endforeach
+
+                    {{-- Next --}}
+                    @if($logs->hasMorePages())
+                        <li class="page-item">
+                            <a class="page-link rounded-2" href="{{ $logs->nextPageUrl() }}"
+                               style="font-size:.8rem;padding:.3rem .65rem" aria-label="Next">
+                                <i class="bi bi-chevron-right" style="font-size:.7rem"></i>
+                            </a>
+                        </li>
+                    @else
+                        <li class="page-item disabled">
+                            <span class="page-link rounded-2" style="font-size:.8rem;padding:.3rem .65rem">
+                                <i class="bi bi-chevron-right" style="font-size:.7rem"></i>
+                            </span>
+                        </li>
+                    @endif
+                </ul>
+            </nav>
         </div>
     @endif
 </div>
