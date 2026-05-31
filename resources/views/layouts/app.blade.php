@@ -17,17 +17,15 @@
 
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @if(app()->isLocale('ar'))
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-        @endif
-    @else
-        @if(app()->isLocale('ar'))
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-        @else
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        @endif
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     @endif
+
+    {{-- Bootstrap CSS + Icons always loaded from CDN — required for navbar collapse to work --}}
+    @if(app()->isLocale('ar'))
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    @else
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    @endif
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <style>
         /* ─────────────────────────────────────────────────
@@ -692,6 +690,17 @@
         [data-bs-toggle="collapse"][aria-expanded="true"] .collapse-arrow {
             transform: rotate(180deg);
         }
+        /* Mobile: compact navbar */
+        @media (max-width: 575.98px) {
+            .brand-mark { width: 32px !important; height: 32px !important; }
+            .brand-mark-letter { font-size: .85rem !important; }
+            .brand-name { font-size: .8rem !important; }
+            .brand-sub { display: none; }
+            .site-nav { padding-top: .4rem !important; padding-bottom: .4rem !important; }
+            .site-nav .nav-link { font-size: .8rem !important; padding: .35rem .5rem !important; }
+            .nav-avatar { width: 28px !important; height: 28px !important; font-size: .7rem !important; }
+            .navbar-brand { gap: .4rem !important; }
+        }
     </style>
 
     @stack('styles')
@@ -1010,9 +1019,9 @@
     {{-- ═══════════════════════════════════════════════════════
          SCRIPTS
     ════════════════════════════════════════════════════════ --}}
-    @if (!(file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot'))))
+    {{-- Bootstrap JS always loaded from CDN — required for navbar collapse --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    @else
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/js/app.js'])
     @endif
 

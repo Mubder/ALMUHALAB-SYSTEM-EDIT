@@ -105,7 +105,7 @@ class DashboardController extends Controller
         if (!$isClient) {
             $avgSeconds = ServiceRequest::where('stage_status', 'Closed')
                 ->whereNotNull('stage_entered_at')
-                ->selectRaw('AVG(JULIANDAY(stage_entered_at) - JULIANDAY(created_at)) as avg_days')
+                ->selectRaw('AVG(DATEDIFF(stage_entered_at, created_at)) as avg_days')
                 ->value('avg_days');
             $avgDays = $avgSeconds ? round($avgSeconds, 1) : null;
         }
