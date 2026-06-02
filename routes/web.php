@@ -244,4 +244,4 @@ require __DIR__.'/auth.php';
 
 // Landing page — catch-all at the end to avoid conflicting with named routes
 Route::get('/', [App\Http\Controllers\LandingPageController::class, 'show'])->defaults('slug', 'home');
-Route::get('/{slug}', [App\Http\Controllers\LandingPageController::class, 'show'])->where('slug', '[a-z0-9-]+');
+Route::get('/{slug}', [App\Http\Controllers\LandingPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('landing.page');

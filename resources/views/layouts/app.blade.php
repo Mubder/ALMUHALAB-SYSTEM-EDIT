@@ -785,7 +785,7 @@
 
           {{-- Admin Dropdown (always visible) --}}
           @auth
-          @if(auth()->user()->hasPermission('manage_users'))
+          @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_pages'))
           <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle d-none d-lg-flex {{ request()->routeIs('admin.*') ? 'active' : '' }}"
                  href="#" data-bs-toggle="dropdown" data-bs-offset="0,6" role="button">

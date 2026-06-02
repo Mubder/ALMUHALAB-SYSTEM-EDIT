@@ -37,7 +37,7 @@
                 <button class="btn btn-primary btn-sm w-100">{{ __('Update Settings') }}</button>
             </form>
             <hr>
-            <a href="/{{ $page->slug }}" target="_blank" class="btn btn-outline-secondary btn-sm w-100">
+            <a href="{{ route('landing.page', $page->slug) }}" target="_blank" class="btn btn-outline-secondary btn-sm w-100">
                 <i class="bi bi-box-arrow-up-right me-1"></i>{{ __('Preview') }}
             </a>
         </div>
