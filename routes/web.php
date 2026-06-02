@@ -11,12 +11,9 @@ use App\Http\Controllers\ServiceTypeController;
 use App\Http\Controllers\StageAttachmentController;
 use App\Http\Controllers\StageCommentController;
 use App\Http\Controllers\WorkflowController;
+use App\Http\Controllers\PageSectionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Route::get('/terms', function () {
     return view('terms');
@@ -227,7 +224,24 @@ Route::middleware('auth')->group(function () {
 
             Route::get('audit-log',                      [AdminController::class, 'auditLog'])            ->name('audit-log.index');
             Route::get('audit-log/{service_request}',    [AdminController::class, 'auditLogForRequest'])  ->name('audit-log.show');
+
+            // Page Builder
+            Route::get('pages',                          [PageSectionController::class, 'index'])           ->name('pages.index');
+            Route::get('pages/create',                   [PageSectionController::class, 'create'])          ->name('pages.create');
+            Route::post('pages',                         [PageSectionController::class, 'store'])           ->name('pages.store');
+            Route::get('pages/{page}',                   [PageSectionController::class, 'edit'])            ->name('pages.edit');
+            Route::put('pages/{page}',                   [PageSectionController::class, 'update'])          ->name('pages.update');
+            Route::delete('pages/{page}',                [PageSectionController::class, 'destroy'])         ->name('pages.destroy');
+            Route::post('pages/{page}/sections',         [PageSectionController::class, 'sectionStore'])    ->name('pages.section.store');
+            Route::get('pages/{page}/sections/{section}',[PageSectionController::class, 'sectionEdit'])     ->name('pages.section.edit');
+            Route::put('pages/{page}/sections/{section}',[PageSectionController::class, 'sectionUpdate'])   ->name('pages.section.update');
+            Route::delete('pages/{page}/sections/{section}',[PageSectionController::class, 'sectionDestroy'])->name('pages.section.destroy');
+            Route::post('pages/{page}/sections/reorder', [PageSectionController::class, 'sectionReorder'])  ->name('pages.section.reorder');
         });
 });
 
 require __DIR__.'/auth.php';
+
+// Landing page — catch-all at the end to avoid conflicting with named routes
+Route::get('/', [App\Http\Controllers\LandingPageController::class, 'show'])->defaults('slug', 'home');
+Route::get('/{slug}', [App\Http\Controllers\LandingPageController::class, 'show'])->where('slug', '[a-z0-9-]+');

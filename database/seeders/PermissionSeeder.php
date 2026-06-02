@@ -29,6 +29,7 @@ class PermissionSeeder extends Seeder
             'manage_service_catalog',
             'manage_attachments',
             'view_attachments',
+            'manage_pages',
             'transition_stage',
             'force_transition',
             'manage_assignments',

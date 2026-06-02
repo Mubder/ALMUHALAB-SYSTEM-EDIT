@@ -727,13 +727,7 @@
             </span>
         </a>
 
-        <button class="navbar-toggler border-0 text-white" type="button"
-                data-bs-toggle="collapse" data-bs-target="#navMain"
-                aria-controls="navMain" aria-expanded="false">
-            <i class="bi bi-list fs-4"></i>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navMain">
+        <div class="collapse navbar-collapse order-lg-0" id="navMain">
 
           {{-- Left links --}}
           <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1 mt-2 mt-lg-0">
@@ -812,156 +806,185 @@
                             </a>
                         </li>
                         @endif
+                        @if(auth()->user()->hasPermission('manage_pages'))
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('admin.pages.index') }}">
+                                <i class="bi bi-file-earmark-text"></i>{{ __('Page Builder') }}
+                            </a>
+                        </li>
+                        @endif
                     </ul>
                 </li>
                 @endif
             @endauth
           </ul>
-
-          {{-- Right controls --}}
-          <ul class="navbar-nav align-items-center gap-1 mb-2 mb-lg-0">
-
-            {{-- Language Switcher --}}
-            <li class="nav-item">
-                <div class="d-flex align-items-center gap-0"
-                     style="background:rgba(255,255,255,.08);border-radius:6px;padding:2px">
-                    <a href="{{ route('lang.switch', 'ar') }}"
-                       class="nav-link px-2 py-1 {{ app()->isLocale('ar') ? 'text-white fw-bold' : '' }}"
-                       style="font-size:.78rem;border-radius:4px;{{ app()->isLocale('ar') ? 'background:rgba(255,255,255,.18)' : '' }}">
-                       AR
-                    </a>
-                    <a href="{{ route('lang.switch', 'en') }}"
-                       class="nav-link px-2 py-1 {{ app()->isLocale('en') ? 'text-white fw-bold' : '' }}"
-                       style="font-size:.78rem;border-radius:4px;{{ app()->isLocale('en') ? 'background:rgba(255,255,255,.18)' : '' }}">
-                       EN
-                    </a>
-                </div>
-            </li>
-
-            @guest
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="btn btn-primary btn-sm px-3" href="{{ route('register') }}">{{ __('Register') }}</a>
-                </li>
-            @else
-
-                {{-- Notification Bell --}}
-                @php $unreadCount = auth()->user()->unreadNotifications()->count(); @endphp
-                <li class="nav-item dropdown">
-                    <a class="nav-link notif-trigger" href="#"
-                       data-bs-toggle="dropdown" data-bs-offset="0,8"
-                       role="button" aria-label="Notifications">
-                        <i class="bi bi-bell fs-6"></i>
-                        @if($unreadCount > 0)
-                            <span class="notif-count">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
-                        @endif
-                    </a>
-
-                    <div class="dropdown-menu notif-panel">
-                        <div class="notif-panel-header">
-                            <span class="title">
-                                <i class="bi bi-bell me-1 opacity-75"></i>{{ __('Notifications') }}
-                                @if($unreadCount > 0)
-                                    <span class="badge bg-primary rounded-pill ms-1" style="font-size:.62rem">{{ $unreadCount }}</span>
-                                @endif
-                            </span>
-                            @if($unreadCount > 0)
-                                <form action="{{ route('notifications.read-all') }}" method="POST" class="d-inline">
-                                    @csrf @method('PATCH')
-                                    <button type="submit" class="mark-all-btn">{{ __('Mark all read') }}</button>
-                                </form>
-                            @endif
-                        </div>
-
-                        <div class="notif-list">
-                            @forelse(auth()->user()->notifications()->latest()->take(15)->get() as $notif)
-                                @php $d = $notif->data; @endphp
-                                <div class="notif-row {{ $notif->read_at ? '' : 'unread' }}">
-                                    <div class="notif-icon bg-{{ $d['color'] ?? 'primary' }} bg-opacity-10 text-{{ $d['color'] ?? 'primary' }}">
-                                        <i class="bi {{ $d['icon'] ?? 'bi-bell' }}"></i>
-                                    </div>
-                                    <div style="flex:1;min-width:0">
-                                        <div class="notif-title">{{ $d['title'] ?? 'Notification' }}</div>
-                                        <div class="notif-msg">{{ Str::limit($d['message'] ?? '', 80) }}</div>
-                                        <div class="notif-actions">
-                                            <span class="notif-time">{{ $notif->created_at->diffForHumans() }}</span>
-                                            @if(!empty($d['url']))
-                                                <a href="{{ $d['url'] }}">View →</a>
-                                            @endif
-                                            @if(!$notif->read_at)
-                                                <form action="{{ route('notifications.read', $notif->id) }}" method="POST" class="d-inline">
-                                                    @csrf @method('PATCH')
-                                                    <button type="submit">{{ __('Mark as read') }}</button>
-                                                </form>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="notif-empty">
-                                    <i class="bi bi-bell-slash"></i>
-                                    <span>{{ __('No notifications yet') }}</span>
-                                </div>
-                            @endforelse
-                        </div>
-                        <div style="padding:.6rem 1rem;border-top:1px solid rgba(255,255,255,.08);text-align:center">
-                            <a href="{{ route('notifications.index') }}"
-                               style="font-size:.78rem;color:rgba(255,255,255,.45);text-decoration:none">
-                                {{ __('View all notifications') }} <i class="bi bi-arrow-right"></i>
-                            </a>
-                        </div>
-                    </div>
-                </li>
-
-                {{-- New Request (desktop only) --}}
-                @if(auth()->user()->hasPermission('create_request'))
-                <li class="nav-item d-none d-lg-block">
-                    <a class="btn btn-primary btn-sm px-3" href="{{ route('service-requests.create') }}">
-                        <i class="bi bi-plus-lg me-1"></i>{{ __('New Request') }}
-                    </a>
-                </li>
-                @endif
-
-                {{-- User menu --}}
-                <li class="nav-item dropdown">
-                    <a class="nav-link d-flex align-items-center gap-2 dropdown-toggle"
-                       href="#" role="button" data-bs-toggle="dropdown" data-bs-offset="0,8">
-                        <span class="nav-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
-                        <span class="d-none d-lg-inline text-white fw-500" style="font-size:.855rem">
-                            {{ Auth::user()->name }}
-                        </span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li class="px-3 py-2" style="border-bottom:1px solid rgba(255,255,255,.08)">
-                            <div class="text-white fw-600" style="font-size:.855rem">{{ Auth::user()->name }}</div>
-                            <div style="font-size:.75rem;color:rgba(255,255,255,.4)">{{ Auth::user()->email }}</div>
-                            @if(Auth::user()->role)
-                                <span class="badge bg-primary bg-opacity-25 text-primary rounded-pill mt-1"
-                                      style="font-size:.65rem">{{ Auth::user()->role->name }}</span>
-                            @endif
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                <i class="bi bi-person"></i>{{ __('Profile Settings') }}
-                            </a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button class="dropdown-item text-danger" type="submit">
-                                    <i class="bi bi-box-arrow-right"></i>{{ __('Sign Out') }}
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
-
-            @endguest
-          </ul>
         </div>
+
+        {{-- Right controls — always visible, outside collapse --}}
+        <ul class="navbar-nav align-items-center flex-row gap-0 gap-lg-1 ms-auto">
+
+          {{-- Language Switcher --}}
+          <li class="nav-item">
+              <div class="d-flex align-items-center gap-0"
+                   style="background:rgba(255,255,255,.08);border-radius:6px;padding:2px">
+                  <a href="{{ route('lang.switch', 'ar') }}"
+                     class="nav-link px-2 py-1 {{ app()->isLocale('ar') ? 'text-white fw-bold' : '' }}"
+                     style="font-size:.78rem;border-radius:4px;{{ app()->isLocale('ar') ? 'background:rgba(255,255,255,.18)' : '' }}">
+                     AR
+                  </a>
+                  <a href="{{ route('lang.switch', 'en') }}"
+                     class="nav-link px-2 py-1 {{ app()->isLocale('en') ? 'text-white fw-bold' : '' }}"
+                     style="font-size:.78rem;border-radius:4px;{{ app()->isLocale('en') ? 'background:rgba(255,255,255,.18)' : '' }}">
+                     EN
+                  </a>
+              </div>
+          </li>
+
+          @guest
+              <li class="nav-item">
+                  <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+              </li>
+              <li class="nav-item">
+                  <a class="btn btn-primary btn-sm px-3" href="{{ route('register') }}">{{ __('Register') }}</a>
+              </li>
+          @else
+
+              {{-- Notification Bell --}}
+              @php $unreadCount = auth()->user()->unreadNotifications()->count(); @endphp
+              <li class="nav-item dropdown">
+                  <a class="nav-link notif-trigger" href="#"
+                     data-bs-toggle="dropdown" data-bs-offset="0,8"
+                     role="button" aria-label="Notifications">
+                      <i class="bi bi-bell fs-6"></i>
+                      @if($unreadCount > 0)
+                          <span class="notif-count">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
+                      @endif
+                  </a>
+
+                  <div class="dropdown-menu notif-panel">
+                      <div class="notif-panel-header">
+                          <span class="title">
+                              <i class="bi bi-bell me-1 opacity-75"></i>{{ __('Notifications') }}
+                              @if($unreadCount > 0)
+                                  <span class="badge bg-primary rounded-pill ms-1" style="font-size:.62rem">{{ $unreadCount }}</span>
+                              @endif
+                          </span>
+                          @if($unreadCount > 0)
+                              <form action="{{ route('notifications.read-all') }}" method="POST" class="d-inline">
+                                  @csrf @method('PATCH')
+                                  <button type="submit" class="mark-all-btn">{{ __('Mark all read') }}</button>
+                              </form>
+                          @endif
+                      </div>
+
+                      <div class="notif-list">
+                          @forelse(auth()->user()->notifications()->latest()->take(15)->get() as $notif)
+                              @php $d = $notif->data; @endphp
+                              <div class="notif-row {{ $notif->read_at ? '' : 'unread' }}">
+                                  <div class="notif-icon bg-{{ $d['color'] ?? 'primary' }} bg-opacity-10 text-{{ $d['color'] ?? 'primary' }}">
+                                      <i class="bi {{ $d['icon'] ?? 'bi-bell' }}"></i>
+                                  </div>
+                                  <div style="flex:1;min-width:0">
+                                      <div class="notif-title">{{ $d['title'] ?? 'Notification' }}</div>
+                                      <div class="notif-msg">{{ Str::limit($d['message'] ?? '', 80) }}</div>
+                                      <div class="notif-actions">
+                                          <span class="notif-time">{{ $notif->created_at->diffForHumans() }}</span>
+                                          @if(!empty($d['url']))
+                                              <a href="{{ $d['url'] }}">View →</a>
+                                          @endif
+                                          @if(!$notif->read_at)
+                                              <form action="{{ route('notifications.read', $notif->id) }}" method="POST" class="d-inline">
+                                                  @csrf @method('PATCH')
+                                                  <button type="submit">{{ __('Mark as read') }}</button>
+                                              </form>
+                                          @endif
+                                      </div>
+                                  </div>
+                              </div>
+                          @empty
+                              <div class="notif-empty">
+                                  <i class="bi bi-bell-slash"></i>
+                                  <span>{{ __('No notifications yet') }}</span>
+                              </div>
+                          @endforelse
+                      </div>
+                      <div style="padding:.6rem 1rem;border-top:1px solid rgba(255,255,255,.08);text-align:center">
+                          <a href="{{ route('notifications.index') }}"
+                             style="font-size:.78rem;color:rgba(255,255,255,.45);text-decoration:none">
+                              {{ __('View all notifications') }} <i class="bi bi-arrow-right"></i>
+                          </a>
+                      </div>
+                  </div>
+              </li>
+
+              {{-- New Request (desktop only) --}}
+              @if(auth()->user()->hasPermission('create_request'))
+              <li class="nav-item d-none d-lg-inline-block">
+                  <a class="btn btn-primary btn-sm px-3" href="{{ route('service-requests.create') }}">
+                      <i class="bi bi-plus-lg me-1"></i>{{ __('New Request') }}
+                  </a>
+              </li>
+              @endif
+
+              {{-- User menu --}}
+              <li class="nav-item dropdown">
+                  <a class="nav-link d-flex align-items-center gap-2 dropdown-toggle"
+                     href="#" role="button" data-bs-toggle="dropdown" data-bs-offset="0,8">
+                      <span class="nav-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</span>
+                      <span class="d-none d-lg-inline text-white fw-500" style="font-size:.855rem">
+                          {{ Auth::user()->name }}
+                      </span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                      <li class="px-3 py-2" style="border-bottom:1px solid rgba(255,255,255,.08)">
+                          <div class="text-white fw-600" style="font-size:.855rem">{{ Auth::user()->name }}</div>
+                          <div style="font-size:.75rem;color:rgba(255,255,255,.4)">{{ Auth::user()->email }}</div>
+                          @if(Auth::user()->role)
+                              <span class="badge bg-primary bg-opacity-25 text-primary rounded-pill mt-1"
+                                    style="font-size:.65rem">{{ Auth::user()->role->name }}</span>
+                          @endif
+                      </li>
+                      <li>
+                          <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                              <i class="bi bi-person"></i>{{ __('Profile Settings') }}
+                          </a>
+                      </li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li>
+                          <form action="{{ route('logout') }}" method="POST">
+                              @csrf
+                              <button class="dropdown-item text-danger" type="submit">
+                                  <i class="bi bi-box-arrow-right"></i>{{ __('Sign Out') }}
+                              </button>
+                          </form>
+                      </li>
+                  </ul>
+              </li>
+
+              {{-- Fallback logout/profile — always visible (for when dropdown/JS fails) --}}
+              <li class="nav-item">
+                  <a class="nav-link px-2" href="{{ route('profile.edit') }}" title="{{ __('Profile Settings') }}" style="color:rgba(255,255,255,.5);font-size:.78rem">
+                      <i class="bi bi-person"></i>
+                  </a>
+              </li>
+              <li class="nav-item">
+                  <form action="{{ route('logout') }}" method="POST">
+                      @csrf
+                      <button type="submit" class="nav-link px-2" style="background:none;border:none;color:rgba(255,255,255,.5);font-size:.78rem" title="{{ __('Sign Out') }}">
+                          <i class="bi bi-box-arrow-right"></i>
+                      </button>
+                  </form>
+              </li>
+
+          @endguest
+        </ul>
+
+        <button class="navbar-toggler border-0 text-white" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navMain"
+                aria-controls="navMain" aria-expanded="false">
+            <i class="bi bi-list fs-4"></i>
+        </button>
       </div>
     </nav>
 
