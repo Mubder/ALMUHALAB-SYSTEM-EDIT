@@ -29,6 +29,10 @@ class PermissionSeeder extends Seeder
             'manage_service_catalog',
             'manage_attachments',
             'view_attachments',
+            'transition_stage',
+            'force_transition',
+            'manage_assignments',
+            'view_all_comments',
         ];
 
         $created = collect();
