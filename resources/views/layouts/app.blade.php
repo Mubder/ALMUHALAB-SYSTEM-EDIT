@@ -762,59 +762,18 @@
                 </li>
                 @endif
 
-                @if(auth()->user()->hasPermission('manage_users'))
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->routeIs('admin.*') ? 'active' : '' }}"
-                       href="#" data-bs-toggle="dropdown" data-bs-offset="0,6" role="button">
-                        <i class="bi bi-shield-lock me-1"></i>{{ __('Admin') }}
+                @if(auth()->user()->hasPermission('manage_pages'))
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link" href="{{ route('admin.pages.index') }}">
+                        <i class="bi bi-file-earmark-text me-1"></i>{{ __('Page Builder') }}
                     </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item {{ request()->routeIs('admin.users.*') ? 'text-white' : '' }}"
-                               href="{{ route('admin.users.index') }}">
-                                <i class="bi bi-people"></i>{{ __('Users') }}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{{ route('admin.roles.index') }}">
-                                <i class="bi bi-shield-check"></i>{{ __('Roles & Permissions') }}
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{{ route('admin.service-types.index') }}">
-                                <i class="bi bi-tags"></i>{{ __('Service Types') }}
-                            </a>
-                        </li>
-                        @if(auth()->user()->hasPermission('manage_service_catalog'))
-                        <li>
-                            <a class="dropdown-item" href="{{ route('admin.service-catalog.index') }}">
-                                <i class="bi bi-grid-3x3-gap"></i>{{ __('Service Catalog') }}
-                            </a>
-                        </li>
-                        @endif
-                        <li>
-                            <a class="dropdown-item {{ request()->routeIs('admin.milestone-types.*') ? 'text-white' : '' }}"
-                               href="{{ route('admin.milestone-types.index') }}">
-                                <i class="bi bi-diagram-3"></i>{{ __('Milestone Types') }}
-                            </a>
-                        </li>
-                        @if(auth()->user()->hasPermission('view_audit_log'))
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="{{ route('admin.audit-log.index') }}">
-                                <i class="bi bi-clock-history"></i>{{ __('Audit Log') }}
-                            </a>
-                        </li>
-                        @endif
-                        @if(auth()->user()->hasPermission('manage_pages'))
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="{{ route('admin.pages.index') }}">
-                                <i class="bi bi-file-earmark-text"></i>{{ __('Page Builder') }}
-                            </a>
-                        </li>
-                        @endif
-                    </ul>
+                </li>
+                @endif
+                @if(auth()->user()->hasPermission('manage_users'))
+                <li class="nav-item d-lg-none">
+                    <a class="nav-link" href="{{ route('admin.users.index') }}">
+                        <i class="bi bi-people me-1"></i>{{ __('Users') }}
+                    </a>
                 </li>
                 @endif
             @endauth
@@ -823,6 +782,71 @@
 
         {{-- Right controls — always visible, outside collapse --}}
         <ul class="navbar-nav align-items-center flex-row gap-0 gap-lg-1 ms-auto">
+
+          {{-- Admin Dropdown (always visible) --}}
+          @auth
+          @if(auth()->user()->hasPermission('manage_users'))
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle d-none d-lg-flex {{ request()->routeIs('admin.*') ? 'active' : '' }}"
+                 href="#" data-bs-toggle="dropdown" data-bs-offset="0,6" role="button">
+                  <i class="bi bi-shield-lock"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                      <a class="dropdown-item {{ request()->routeIs('admin.users.*') ? 'text-white' : '' }}"
+                         href="{{ route('admin.users.index') }}">
+                          <i class="bi bi-people"></i>{{ __('Users') }}
+                      </a>
+                  </li>
+                  <li>
+                      <a class="dropdown-item" href="{{ route('admin.roles.index') }}">
+                          <i class="bi bi-shield-check"></i>{{ __('Roles & Permissions') }}
+                      </a>
+                  </li>
+                  <li>
+                      <a class="dropdown-item" href="{{ route('admin.service-types.index') }}">
+                          <i class="bi bi-tags"></i>{{ __('Service Types') }}
+                      </a>
+                  </li>
+                  @if(auth()->user()->hasPermission('manage_service_catalog'))
+                  <li>
+                      <a class="dropdown-item" href="{{ route('admin.service-catalog.index') }}">
+                          <i class="bi bi-grid-3x3-gap"></i>{{ __('Service Catalog') }}
+                      </a>
+                  </li>
+                  @endif
+                  <li>
+                      <a class="dropdown-item {{ request()->routeIs('admin.milestone-types.*') ? 'text-white' : '' }}"
+                         href="{{ route('admin.milestone-types.index') }}">
+                          <i class="bi bi-diagram-3"></i>{{ __('Milestone Types') }}
+                      </a>
+                  </li>
+                  @if(auth()->user()->hasPermission('view_audit_log'))
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                      <a class="dropdown-item" href="{{ route('admin.audit-log.index') }}">
+                          <i class="bi bi-clock-history"></i>{{ __('Audit Log') }}
+                      </a>
+                  </li>
+                  @endif
+                  @if(auth()->user()->hasPermission('manage_pages'))
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                      <a class="dropdown-item" href="{{ route('admin.pages.index') }}">
+                          <i class="bi bi-file-earmark-text"></i>{{ __('Page Builder') }}
+                      </a>
+                  </li>
+                  @endif
+              </ul>
+          </li>
+          @elseif(auth()->user()->hasPermission('manage_pages'))
+          <li class="nav-item d-none d-lg-flex">
+              <a class="nav-link" href="{{ route('admin.pages.index') }}" title="{{ __('Page Builder') }}">
+                  <i class="bi bi-file-earmark-text"></i>
+              </a>
+          </li>
+          @endif
+          @endauth
 
           {{-- Language Switcher --}}
           <li class="nav-item">
