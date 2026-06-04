@@ -10,17 +10,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 
+    {{-- Bootstrap CSS + Icons: always from CDN --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    {{-- Vite: Tailwind CSS + Alpine.js when available --}}
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @else
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     @endif
 
     <style>
         body {
             font-family: 'Inter', system-ui, sans-serif;
-            background: #0f172a;
+            background: #f1f5f9;
             min-height: 100vh;
             margin: 0;
         }
@@ -31,9 +33,8 @@
             justify-content: center;
             padding: 2rem 1rem;
             background:
-                radial-gradient(ellipse 80% 60% at 50% -10%, rgba(37,99,235,.18) 0%, transparent 70%),
-                radial-gradient(ellipse 60% 40% at 80% 110%, rgba(245,158,11,.10) 0%, transparent 60%),
-                #0f172a;
+                radial-gradient(ellipse 70% 50% at 50% 0%, rgba(245,158,11,.07) 0%, transparent 65%),
+                #f1f5f9;
         }
         .login-card {
             width: 100%;
@@ -51,14 +52,14 @@
             background: linear-gradient(145deg, #b45309, #f59e0b 60%, #fbbf24);
             border-radius: 16px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 20px rgba(245,158,11,.30), inset 0 1px 0 rgba(255,255,255,.18);
+            box-shadow: 0 4px 20px rgba(245,158,11,.28), inset 0 1px 0 rgba(255,255,255,.18);
             position: relative;
             overflow: hidden;
         }
         .login-brand-mark::before {
             content: '';
             position: absolute; inset: 0;
-            background: linear-gradient(180deg, rgba(255,255,255,.12) 0%, transparent 55%);
+            background: linear-gradient(180deg, rgba(255,255,255,.14) 0%, transparent 55%);
         }
         .login-brand-letter {
             font-size: 1.8rem;
@@ -67,7 +68,7 @@
             font-family: 'Cairo', system-ui, sans-serif;
             line-height: 1;
             position: relative;
-            text-shadow: 0 1px 4px rgba(0,0,0,.25);
+            text-shadow: 0 1px 4px rgba(0,0,0,.20);
         }
         .login-brand-text {
             text-align: center;
@@ -75,90 +76,100 @@
         .login-brand-name {
             font-size: 1.25rem;
             font-weight: 700;
-            color: #fff;
+            color: #1e293b;
             letter-spacing: -.3px;
             display: block;
         }
         .login-brand-sub {
             font-size: .72rem;
-            font-weight: 500;
-            color: rgba(255,255,255,.4);
+            font-weight: 600;
+            color: #94a3b8;
             letter-spacing: .1em;
             text-transform: uppercase;
             display: block;
             margin-top: .1rem;
         }
         .login-form-card {
-            background: rgba(255,255,255,.04);
-            border: 1px solid rgba(255,255,255,.08);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 16px;
-            padding: 2rem;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 8px 40px rgba(0,0,0,.35);
+            padding: 2.25rem 2rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
+        }
+        .login-form-card h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: .25rem;
+        }
+        .login-form-card .login-subtitle {
+            font-size: .875rem;
+            color: #64748b;
+            margin-bottom: 1.75rem;
         }
         .login-form-card .form-label {
-            color: rgba(255,255,255,.65);
-            font-size: .83rem;
-            font-weight: 500;
+            color: #374151;
+            font-size: .84rem;
+            font-weight: 600;
+            margin-bottom: .35rem;
         }
         .login-form-card .form-control {
-            background: rgba(255,255,255,.06);
-            border: 1px solid rgba(255,255,255,.10);
-            color: #fff;
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            color: #1e293b;
             border-radius: 8px;
-            padding: .55rem .85rem;
+            padding: .6rem .9rem;
             font-size: .9rem;
-            transition: border-color .15s, background .15s;
+            transition: border-color .15s, box-shadow .15s, background .15s;
         }
         .login-form-card .form-control:focus {
-            background: rgba(255,255,255,.09);
-            border-color: rgba(245,158,11,.5);
+            background: #fff;
+            border-color: #f59e0b;
             box-shadow: 0 0 0 3px rgba(245,158,11,.12);
-            color: #fff;
+            color: #1e293b;
             outline: none;
         }
-        .login-form-card .form-control::placeholder { color: rgba(255,255,255,.25); }
+        .login-form-card .form-control::placeholder { color: #94a3b8; }
         .login-form-card .form-check-input {
-            background-color: rgba(255,255,255,.08);
-            border-color: rgba(255,255,255,.20);
+            background-color: #fff;
+            border-color: #cbd5e1;
         }
         .login-form-card .form-check-input:checked {
             background-color: #f59e0b;
             border-color: #f59e0b;
         }
-        .login-form-card .form-check-label { color: rgba(255,255,255,.6); font-size: .83rem; }
+        .login-form-card .form-check-label { color: #475569; font-size: .84rem; }
         .btn-login {
             background: linear-gradient(135deg, #d97706, #f59e0b);
             border: none;
             color: #fff;
             font-weight: 600;
             font-size: .92rem;
-            padding: .6rem 1.5rem;
+            padding: .65rem 1.5rem;
             border-radius: 8px;
             width: 100%;
-            transition: opacity .15s, transform .1s;
-            box-shadow: 0 3px 12px rgba(245,158,11,.30);
+            transition: opacity .15s, transform .1s, box-shadow .15s;
+            box-shadow: 0 3px 12px rgba(245,158,11,.35);
         }
-        .btn-login:hover { opacity: .9; transform: translateY(-1px); color: #fff; }
+        .btn-login:hover { opacity: .92; transform: translateY(-1px); color: #fff; box-shadow: 0 5px 16px rgba(245,158,11,.40); }
         .btn-login:active { transform: translateY(0); }
-        .login-form-card a { color: #f59e0b; }
-        .login-form-card a:hover { color: #fbbf24; }
-        .forgot-link { color: rgba(255,255,255,.4) !important; font-size: .78rem; text-decoration: none; transition: color .15s; }
-        .forgot-link:hover { color: #f59e0b !important; }
+        .login-form-card a { color: #d97706; text-decoration: none; font-weight: 500; }
+        .login-form-card a:hover { color: #b45309; }
+        .forgot-link { color: #94a3b8 !important; font-size: .8rem; text-decoration: none; transition: color .15s; font-weight: 400; }
+        .forgot-link:hover { color: #d97706 !important; }
         .login-divider {
-            border-color: rgba(255,255,255,.08);
+            border-color: #e2e8f0;
             margin: 1.25rem 0;
         }
         .invalid-feedback { font-size: .78rem; }
         .login-form-card .is-invalid {
-            border-color: rgba(248,113,113,.5) !important;
+            border-color: #f87171 !important;
         }
         .login-footer {
             text-align: center;
             margin-top: 1.5rem;
             font-size: .72rem;
-            color: rgba(255,255,255,.22);
+            color: #94a3b8;
         }
     </style>
 </head>
@@ -189,10 +200,7 @@
         </div>
     </div>
 
-@if (!(file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot'))))
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-@else
-    @vite(['resources/js/app.js'])
-@endif
+{{-- Bootstrap JS: always from CDN --}}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

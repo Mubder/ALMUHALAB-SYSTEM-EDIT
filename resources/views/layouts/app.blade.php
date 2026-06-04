@@ -15,18 +15,17 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @endif
 
+    {{-- Bootstrap CSS + Icons: always from CDN (Bootstrap JS loaded in footer) --}}
+    @if(app()->isLocale('ar'))
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    @else
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    @endif
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    {{-- Vite: Tailwind CSS + Alpine.js (only when dev server or production build is available) --}}
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @if(app()->isLocale('ar'))
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-        @endif
-    @else
-        @if(app()->isLocale('ar'))
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-        @else
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        @endif
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     @endif
 
     <style>
@@ -1010,11 +1009,8 @@
     {{-- ═══════════════════════════════════════════════════════
          SCRIPTS
     ════════════════════════════════════════════════════════ --}}
-    @if (!(file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot'))))
+    {{-- Bootstrap JS: always from CDN so modals, collapses, dropdowns always work --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    @else
-        @vite(['resources/js/app.js'])
-    @endif
 
     <script>
     (() => {

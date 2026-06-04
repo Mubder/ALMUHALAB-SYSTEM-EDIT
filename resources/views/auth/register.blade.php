@@ -1,6 +1,6 @@
 <x-guest-layout>
-    <h5 class="fw-bold mb-1" style="color:#fff;letter-spacing:-.3px">{{ __('Create an account') }}</h5>
-    <p style="color:rgba(255,255,255,.4);font-size:.82rem;margin-bottom:1.5rem">{{ __('Fill in your details to get started') }}</p>
+    <h2 class="fw-bold mb-1" style="letter-spacing:-.3px">{{ __('Create an account') }}</h2>
+    <p class="login-subtitle">{{ __('Fill in your details to get started') }}</p>
 
     <form method="POST" action="{{ route('register') }}">
         @csrf
@@ -63,7 +63,7 @@
                        {{ old('terms') ? 'checked' : '' }} required>
                 <label for="terms" class="form-check-label">
                     {{ __('I agree to the') }}
-                    <a href="{{ route('terms') }}" target="_blank" style="color:#f59e0b;font-weight:600">{{ __('Terms & Conditions') }}</a>
+                    <a href="{{ route('terms') }}" target="_blank">{{ __('Terms & Conditions') }}</a>
                 </label>
                 @error('terms')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
@@ -75,9 +75,9 @@
             <i class="bi bi-person-plus me-1"></i>{{ __('Create Account') }}
         </button>
 
-        <p class="text-center mt-4 mb-0" style="font-size:.82rem;color:rgba(255,255,255,.4)">
+        <p class="text-center mt-4 mb-0" style="font-size:.875rem;color:#64748b">
             {{ __('Already have an account?') }}
-            <a href="{{ route('login') }}" style="color:#f59e0b;font-weight:600">{{ __('Sign in') }}</a>
+            <a href="{{ route('login') }}">{{ __('Sign in') }}</a>
         </p>
     </form>
 </x-guest-layout>
