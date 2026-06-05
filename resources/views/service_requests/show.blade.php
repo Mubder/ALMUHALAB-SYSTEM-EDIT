@@ -941,7 +941,7 @@
                     </span>
                     <i class="bi bi-chevron-down text-muted small"></i>
                 </a>
-                <div class="collapse mt-3" id="requestDetails">
+                <div class="collapse show mt-3" id="requestDetails">
 
                     {{-- Client Info --}}
                     @if($serviceRequest->client_name || $serviceRequest->client_phone || $serviceRequest->client_email || $serviceRequest->client_country)

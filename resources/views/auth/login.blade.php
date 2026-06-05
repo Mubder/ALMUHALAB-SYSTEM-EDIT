@@ -1,13 +1,13 @@
 <x-guest-layout>
     <!-- Session Status -->
     @if (session('status'))
-        <div class="mb-3 p-2 rounded" style="background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:#4ade80;font-size:.82rem">
+        <div class="mb-3 p-2 rounded" style="background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;font-size:.84rem">
             {{ session('status') }}
         </div>
     @endif
 
-    <h5 class="fw-bold mb-1" style="color:#fff;letter-spacing:-.3px">{{ __('Welcome back') }}</h5>
-    <p style="color:rgba(255,255,255,.4);font-size:.82rem;margin-bottom:1.5rem">{{ __('Sign in to your account') }}</p>
+    <h2 class="fw-bold mb-1" style="letter-spacing:-.3px">{{ __('Welcome back') }}</h2>
+    <p class="login-subtitle">{{ __('Sign in to your account') }}</p>
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
@@ -53,9 +53,9 @@
         </button>
 
         @if (Route::has('register'))
-            <p class="text-center mt-4 mb-0" style="font-size:.82rem;color:rgba(255,255,255,.4)">
+            <p class="text-center mt-4 mb-0" style="font-size:.875rem;color:#64748b">
                 {{ __("Don't have an account?") }}
-                <a href="{{ route('register') }}" style="color:#f59e0b;font-weight:600">{{ __('Create one') }}</a>
+                <a href="{{ route('register') }}">{{ __('Create one') }}</a>
             </p>
         @endif
     </form>

@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Fix: Tailwind's .collapse utility sets visibility:collapse which breaks Bootstrap's .collapse component */
+.collapse {
+    visibility: visible;
+}

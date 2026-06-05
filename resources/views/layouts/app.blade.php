@@ -15,11 +15,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @endif
 
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @endif
-
-    {{-- Bootstrap CSS + Icons always loaded from CDN — required for navbar collapse to work --}}
+    {{-- Bootstrap CSS + Icons: always from CDN (Bootstrap JS loaded in footer) --}}
     @if(app()->isLocale('ar'))
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     @else
