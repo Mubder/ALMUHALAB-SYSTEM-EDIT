@@ -32,9 +32,19 @@
             align-items: center;
             justify-content: center;
             padding: 2rem 1rem;
-            background:
-                radial-gradient(ellipse 70% 50% at 50% 0%, rgba(245,158,11,.07) 0%, transparent 65%),
-                #f1f5f9;
+            background: url('/images/Background.png') no-repeat center center;
+            background-size: cover;
+            position: relative;
+        }
+        .login-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+        }
+        .login-bg .login-card {
+            position: relative;
+            z-index: 1;
         }
         .login-card {
             width: 100%;
@@ -48,27 +58,16 @@
             margin-bottom: 2rem;
         }
         .login-brand-mark {
-            width: 56px; height: 56px;
-            background: linear-gradient(145deg, #b45309, #f59e0b 60%, #fbbf24);
+            width: 80px; height: 80px;
             border-radius: 16px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 20px rgba(245,158,11,.28), inset 0 1px 0 rgba(255,255,255,.18);
-            position: relative;
             overflow: hidden;
+            background: transparent;
         }
-        .login-brand-mark::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: linear-gradient(180deg, rgba(255,255,255,.14) 0%, transparent 55%);
-        }
-        .login-brand-letter {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: #fff;
-            font-family: 'Cairo', system-ui, sans-serif;
-            line-height: 1;
-            position: relative;
-            text-shadow: 0 1px 4px rgba(0,0,0,.20);
+        .login-brand-mark img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
         .login-brand-text {
             text-align: center;
@@ -90,11 +89,13 @@
             margin-top: .1rem;
         }
         .login-form-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 16px;
             padding: 2.25rem 2rem;
-            box-shadow: 0 4px 24px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
+            box-shadow: 0 4px 24px rgba(0,0,0,.15), 0 1px 4px rgba(0,0,0,.08);
         }
         .login-form-card h2 {
             font-size: 1.25rem;
@@ -169,7 +170,7 @@
             text-align: center;
             margin-top: 1.5rem;
             font-size: .72rem;
-            color: #94a3b8;
+            color: rgba(255, 255, 255, 0.7);
         }
     </style>
 </head>
@@ -180,11 +181,11 @@
             {{-- Brand --}}
             <div class="login-brand">
                 <div class="login-brand-mark">
-                    <span class="login-brand-letter">م</span>
+                    <img src="{{ asset('images/Logo.png') }}" alt="ALMuhalab Logo">
                 </div>
                 <div class="login-brand-text">
-                    <span class="login-brand-name">ALMuhalab</span>
-                    <span class="login-brand-sub">International Co.</span>
+                    <span class="login-brand-name" style="color:#fff">ALMuhalab</span>
+                    <span class="login-brand-sub" style="color:rgba(255,255,255,.7)">International Co.</span>
                 </div>
             </div>
 

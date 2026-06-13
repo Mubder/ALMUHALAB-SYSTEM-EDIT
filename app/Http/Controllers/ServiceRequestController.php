@@ -441,7 +441,12 @@ class ServiceRequestController extends Controller
     private function authorizeAccess(ServiceRequest $serviceRequest): void
     {
         $user = auth()->user();
-        if (!$user->hasPermission('view_request') && !$user->hasPermission('edit_request') && $serviceRequest->user_id !== $user->id) {
+        // Staff with edit_request can access any request
+        if ($user->hasPermission('edit_request')) {
+            return;
+        }
+        // Clients can only access their own requests
+        if ($serviceRequest->user_id !== $user->id) {
             abort(403, 'You do not have access to this request.');
         }
     }

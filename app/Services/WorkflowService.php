@@ -156,7 +156,7 @@ class WorkflowService
             ]);
         });
 
-        self::notifyTransition($sr, $fromStage, $toStage, 'advanced', $actor);
+        self::safeNotifyTransition($sr, $fromStage, $toStage, 'advanced', $actor);
     }
 
     public static function returnToPreviousStage(ServiceRequest $sr, User $actor, ?string $notes = null): void
@@ -182,7 +182,7 @@ class WorkflowService
             ]);
         });
 
-        self::notifyTransition($sr, $fromStage, $toStage, 'returned', $actor);
+        self::safeNotifyTransition($sr, $fromStage, $toStage, 'returned', $actor);
     }
 
     public static function forceTransition(ServiceRequest $sr, User $actor, int $toStage, ?string $notes = null): void
@@ -240,7 +240,7 @@ class WorkflowService
             ]);
         });
 
-        self::notifyStatusChange($sr, $oldStatus, $newStatus, $actor);
+        self::safeNotifyStatusChange($sr, $oldStatus, $newStatus, $actor);
     }
 
     // ── Internal Helpers ─────────────────────────────────────────────
@@ -281,12 +281,30 @@ class WorkflowService
         }
     }
 
+    private static function safeNotifyTransition(ServiceRequest $sr, int $fromStage, int $toStage, string $action, User $actor): void
+    {
+        try {
+            self::notifyTransition($sr, $fromStage, $toStage, $action, $actor);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Notification failed during stage transition: ' . $e->getMessage());
+        }
+    }
+
     private static function notifyStatusChange(ServiceRequest $sr, string $from, string $to, User $actor): void
     {
         $recipients = self::getRecipients($sr, $actor);
 
         foreach ($recipients as $user) {
             $user->notify(new StageStatusChangedNotification($sr, $from, $to, $actor));
+        }
+    }
+
+    private static function safeNotifyStatusChange(ServiceRequest $sr, string $from, string $to, User $actor): void
+    {
+        try {
+            self::notifyStatusChange($sr, $from, $to, $actor);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Notification failed during status change: ' . $e->getMessage());
         }
     }
 

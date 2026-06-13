@@ -155,29 +155,16 @@
         }
         .brand-mark {
             width: 40px; height: 40px;
-            background: linear-gradient(145deg, #b45309, #f59e0b 60%, #fbbf24);
             border-radius: 10px;
             display: inline-flex; align-items: center; justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 2px 10px rgba(245,158,11,.30), inset 0 1px 0 rgba(255,255,255,.18);
-            position: relative;
             overflow: hidden;
+            background: transparent;
         }
-        .brand-mark::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: linear-gradient(180deg, rgba(255,255,255,.12) 0%, transparent 55%);
-            border-radius: inherit;
-        }
-        .brand-mark-letter {
-            font-size: 1.35rem;
-            font-weight: 900;
-            color: #fff;
-            font-family: 'Cairo', 'Inter', system-ui, sans-serif;
-            line-height: 1;
-            position: relative;
-            text-shadow: 0 1px 3px rgba(0,0,0,.25);
-            letter-spacing: 0;
+        .brand-mark img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
         .brand-text {
             display: flex;
@@ -689,7 +676,6 @@
         /* Mobile: compact navbar */
         @media (max-width: 575.98px) {
             .brand-mark { width: 32px !important; height: 32px !important; }
-            .brand-mark-letter { font-size: .85rem !important; }
             .brand-name { font-size: .8rem !important; }
             .brand-sub { display: none; }
             .site-nav { padding-top: .4rem !important; padding-bottom: .4rem !important; }
@@ -715,7 +701,7 @@
         <a class="navbar-brand d-flex align-items-center text-decoration-none"
            href="{{ route('service-requests.index') }}">
             <span class="brand-mark">
-                <span class="brand-mark-letter">م</span>
+                <img src="{{ asset('images/Logo.png') }}" alt="ALMuhalab Logo">
             </span>
             <span class="brand-text">
                 <span class="brand-name">ALMuhalab</span>
@@ -781,7 +767,7 @@
 
           {{-- Admin Dropdown (always visible) --}}
           @auth
-          @if(auth()->user()->hasPermission('manage_users') || auth()->user()->hasPermission('manage_pages'))
+          @if(auth()->user()->hasPermission('manage_users'))
           <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle d-none d-lg-flex {{ request()->routeIs('admin.*') ? 'active' : '' }}"
                  href="#" data-bs-toggle="dropdown" data-bs-offset="0,6" role="button">

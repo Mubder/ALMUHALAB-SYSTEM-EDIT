@@ -192,51 +192,61 @@ Route::middleware('auth')->group(function () {
         });
 
     // ── Admin Panel ───────────────────────────────────────
-    Route::middleware('permission:manage_users')
-        ->prefix('admin')
+    Route::prefix('admin')
         ->name('admin.')
         ->group(function () {
 
-            Route::get('users',               [AdminController::class, 'users'])          ->name('users.index');
-            Route::put('users/{user}',        [AdminController::class, 'updateUser'])     ->name('users.update');
-            Route::delete('users/{user}',     [AdminController::class, 'destroyUser'])    ->name('users.destroy');
-            Route::patch('users/{user}/role', [AdminController::class, 'updateUserRole']) ->name('users.updateRole');
+            // Users & Roles management (requires manage_users)
+            Route::middleware('permission:manage_users')->group(function () {
+                Route::get('users',               [AdminController::class, 'users'])          ->name('users.index');
+                Route::put('users/{user}',        [AdminController::class, 'updateUser'])     ->name('users.update');
+                Route::delete('users/{user}',     [AdminController::class, 'destroyUser'])    ->name('users.destroy');
+                Route::patch('users/{user}/role', [AdminController::class, 'updateUserRole']) ->name('users.updateRole');
 
-            Route::get('service-types',                   [ServiceTypeController::class, 'index'])  ->name('service-types.index');
-            Route::post('service-types',                  [ServiceTypeController::class, 'store'])  ->name('service-types.store');
-            Route::patch('service-types/{serviceType}',   [ServiceTypeController::class, 'update']) ->name('service-types.update');
-            Route::delete('service-types/{serviceType}',  [ServiceTypeController::class, 'destroy'])->name('service-types.destroy');
+                Route::get('service-types',                   [ServiceTypeController::class, 'index'])  ->name('service-types.index');
+                Route::post('service-types',                  [ServiceTypeController::class, 'store'])  ->name('service-types.store');
+                Route::patch('service-types/{serviceType}',   [ServiceTypeController::class, 'update']) ->name('service-types.update');
+                Route::delete('service-types/{serviceType}',  [ServiceTypeController::class, 'destroy'])->name('service-types.destroy');
 
-            Route::get('service-catalog',                        [ServiceCatalogAdminController::class, 'index'])  ->name('service-catalog.index');
-            Route::post('service-catalog',                       [ServiceCatalogAdminController::class, 'store'])  ->name('service-catalog.store');
-            Route::put('service-catalog/{serviceCatalog}',       [ServiceCatalogAdminController::class, 'update']) ->name('service-catalog.update');
-            Route::delete('service-catalog/{serviceCatalog}',    [ServiceCatalogAdminController::class, 'destroy'])->name('service-catalog.destroy');
+                Route::get('milestone-types',                        [MilestoneTypeController::class, 'index'])  ->name('milestone-types.index');
+                Route::post('milestone-types',                       [MilestoneTypeController::class, 'store'])  ->name('milestone-types.store');
+                Route::put('milestone-types/{milestoneType}',        [MilestoneTypeController::class, 'update']) ->name('milestone-types.update');
+                Route::delete('milestone-types/{milestoneType}',     [MilestoneTypeController::class, 'destroy'])->name('milestone-types.destroy');
 
-            Route::get('milestone-types',                        [MilestoneTypeController::class, 'index'])  ->name('milestone-types.index');
-            Route::post('milestone-types',                       [MilestoneTypeController::class, 'store'])  ->name('milestone-types.store');
-            Route::put('milestone-types/{milestoneType}',        [MilestoneTypeController::class, 'update']) ->name('milestone-types.update');
-            Route::delete('milestone-types/{milestoneType}',     [MilestoneTypeController::class, 'destroy'])->name('milestone-types.destroy');
+                Route::get('roles',                          [AdminController::class, 'roles'])              ->name('roles.index');
+                Route::post('roles',                         [AdminController::class, 'storeRole'])          ->name('roles.store');
+                Route::delete('roles/{role}',                [AdminController::class, 'destroyRole'])        ->name('roles.destroy');
+                Route::patch('roles/{role}/permissions',     [AdminController::class, 'updateRolePermissions'])->name('roles.updatePermissions');
+            });
 
-            Route::get('roles',                          [AdminController::class, 'roles'])              ->name('roles.index');
-            Route::post('roles',                         [AdminController::class, 'storeRole'])          ->name('roles.store');
-            Route::delete('roles/{role}',                [AdminController::class, 'destroyRole'])        ->name('roles.destroy');
-            Route::patch('roles/{role}/permissions',     [AdminController::class, 'updateRolePermissions'])->name('roles.updatePermissions');
+            // Service Catalog (requires manage_service_catalog)
+            Route::middleware('permission:manage_service_catalog')->group(function () {
+                Route::get('service-catalog',                        [ServiceCatalogAdminController::class, 'index'])  ->name('service-catalog.index');
+                Route::post('service-catalog',                       [ServiceCatalogAdminController::class, 'store'])  ->name('service-catalog.store');
+                Route::put('service-catalog/{serviceCatalog}',       [ServiceCatalogAdminController::class, 'update']) ->name('service-catalog.update');
+                Route::delete('service-catalog/{serviceCatalog}',    [ServiceCatalogAdminController::class, 'destroy'])->name('service-catalog.destroy');
+            });
 
-            Route::get('audit-log',                      [AdminController::class, 'auditLog'])            ->name('audit-log.index');
-            Route::get('audit-log/{service_request}',    [AdminController::class, 'auditLogForRequest'])  ->name('audit-log.show');
+            // Audit Log (requires view_audit_log)
+            Route::middleware('permission:view_audit_log')->group(function () {
+                Route::get('audit-log',                      [AdminController::class, 'auditLog'])            ->name('audit-log.index');
+                Route::get('audit-log/{service_request}',    [AdminController::class, 'auditLogForRequest'])  ->name('audit-log.show');
+            });
 
-            // Page Builder
-            Route::get('pages',                          [PageSectionController::class, 'index'])           ->name('pages.index');
-            Route::get('pages/create',                   [PageSectionController::class, 'create'])          ->name('pages.create');
-            Route::post('pages',                         [PageSectionController::class, 'store'])           ->name('pages.store');
-            Route::get('pages/{page}',                   [PageSectionController::class, 'edit'])            ->name('pages.edit');
-            Route::put('pages/{page}',                   [PageSectionController::class, 'update'])          ->name('pages.update');
-            Route::delete('pages/{page}',                [PageSectionController::class, 'destroy'])         ->name('pages.destroy');
-            Route::post('pages/{page}/sections',         [PageSectionController::class, 'sectionStore'])    ->name('pages.section.store');
-            Route::get('pages/{page}/sections/{section}',[PageSectionController::class, 'sectionEdit'])     ->name('pages.section.edit');
-            Route::put('pages/{page}/sections/{section}',[PageSectionController::class, 'sectionUpdate'])   ->name('pages.section.update');
-            Route::delete('pages/{page}/sections/{section}',[PageSectionController::class, 'sectionDestroy'])->name('pages.section.destroy');
-            Route::post('pages/{page}/sections/reorder', [PageSectionController::class, 'sectionReorder'])  ->name('pages.section.reorder');
+            // Page Builder (requires manage_pages)
+            Route::middleware('permission:manage_pages')->group(function () {
+                Route::get('pages',                          [PageSectionController::class, 'index'])           ->name('pages.index');
+                Route::get('pages/create',                   [PageSectionController::class, 'create'])          ->name('pages.create');
+                Route::post('pages',                         [PageSectionController::class, 'store'])           ->name('pages.store');
+                Route::get('pages/{page}',                   [PageSectionController::class, 'edit'])            ->name('pages.edit');
+                Route::put('pages/{page}',                   [PageSectionController::class, 'update'])          ->name('pages.update');
+                Route::delete('pages/{page}',                [PageSectionController::class, 'destroy'])         ->name('pages.destroy');
+                Route::post('pages/{page}/sections',         [PageSectionController::class, 'sectionStore'])    ->name('pages.section.store');
+                Route::get('pages/{page}/sections/{section}',[PageSectionController::class, 'sectionEdit'])     ->name('pages.section.edit');
+                Route::put('pages/{page}/sections/{section}',[PageSectionController::class, 'sectionUpdate'])   ->name('pages.section.update');
+                Route::delete('pages/{page}/sections/{section}',[PageSectionController::class, 'sectionDestroy'])->name('pages.section.destroy');
+                Route::post('pages/{page}/sections/reorder', [PageSectionController::class, 'sectionReorder'])  ->name('pages.section.reorder');
+            });
         });
 });
 

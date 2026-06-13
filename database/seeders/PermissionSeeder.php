@@ -49,7 +49,7 @@ class PermissionSeeder extends Seeder
 
         $user = Role::where('name', 'User')->orWhere('name', 'user')->first();
         if ($user) {
-            $userPerms = Permission::whereIn('name', ['create_request', 'view_request', 'delete_request'])->pluck('id')->all();
+            $userPerms = Permission::whereIn('name', ['create_request', 'view_request'])->pluck('id')->all();
             $user->permissions()->sync($userPerms);
         }
 
