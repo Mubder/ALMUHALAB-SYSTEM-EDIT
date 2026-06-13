@@ -103,11 +103,15 @@ class DashboardController extends Controller
         // ── Avg resolution time (closed requests) ────────────────────
         $avgDays = null;
         if (!$isClient) {
-            $avgSeconds = ServiceRequest::where('stage_status', 'Closed')
+            $driver = config('database.default');
+            $datediffExpr = $driver === 'sqlite'
+                ? 'AVG(JULIANDAY(stage_entered_at) - JULIANDAY(created_at))'
+                : 'AVG(DATEDIFF(stage_entered_at, created_at))';
+            $avgDays = ServiceRequest::where('stage_status', 'Closed')
                 ->whereNotNull('stage_entered_at')
-                ->selectRaw('AVG(DATEDIFF(stage_entered_at, created_at)) as avg_days')
+                ->selectRaw("{$datediffExpr} as avg_days")
                 ->value('avg_days');
-            $avgDays = $avgSeconds ? round($avgSeconds, 1) : null;
+            $avgDays = $avgDays ? round($avgDays, 1) : null;
         }
 
         // ── By service type ──────────────────────────────────────────
