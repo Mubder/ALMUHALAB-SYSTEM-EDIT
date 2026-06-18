@@ -1,72 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ALMuhalab International Co. — Company</title>
-    <meta name="description" content="ALMuhalab International Co. - Since 1977">
+    <title>ALMuhalab International Holding Group — Company</title>
+    <meta name="description" content="ALMuhalab International Holding Group - Delivering excellence across industries since 1977.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #006B6B;
+            --primary-light: #008F8F;
+            --primary-dark: #004D4D;
+            --secondary: #1A2B4B;
+            --accent-gold: #D4A843;
+            --bg: #FFFFFF;
+            --surface: #F5F7FA;
+            --text-primary: #1A2B4B;
+            --text-secondary: #4A5568;
+            --text-muted: #718096;
+            --font-primary: 'Old Standard TT', Georgia, serif;
+            --font-secondary: 'Karla', Arial, sans-serif;
+            --font-arabic: 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+        }
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: 'Karla', Arial, sans-serif;
-            background: #161616;
-            color: #fff;
+            font-family: var(--font-secondary);
+            background: var(--bg);
+            color: var(--text-primary);
             -webkit-font-smoothing: antialiased;
         }
         .page {
             max-width: 900px;
             margin: 0 auto;
-            padding: 80px 24px;
+            padding: 100px 24px 80px;
         }
         .back {
             display: inline-block;
-            color: #6382ab;
+            color: var(--primary);
             text-decoration: none;
             font-size: 14px;
+            font-weight: 600;
             margin-bottom: 48px;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
         }
-        .back:hover { color: #fff; }
-        h1 {
-            font-family: 'Old Standard TT', Georgia, serif;
-            font-size: 42px;
-            letter-spacing: 3px;
-            margin-bottom: 8px;
-        }
-        .since {
-            font-family: 'Old Standard TT', serif;
-            font-style: italic;
-            color: #c9a84c;
-            font-size: 14px;
-            letter-spacing: 2px;
-            margin-bottom: 48px;
-        }
-        .divider {
-            width: 60px;
-            height: 2px;
-            background: #6382ab;
-            margin: 32px 0;
-        }
-        p {
-            color: #a0aec0;
-            line-height: 1.8;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
+        .back:hover { color: var(--primary-dark); }
         .logo-area {
-            margin-bottom: 48px;
+            margin-bottom: 40px;
             text-align: center;
         }
         .logo-area img {
             max-height: 100px;
             width: auto;
         }
+        h1 {
+            font-family: var(--font-primary);
+            font-size: 42px;
+            letter-spacing: 3px;
+            color: var(--secondary);
+            margin-bottom: 8px;
+        }
+        .arabic-name {
+            display: block;
+            font-family: var(--font-arabic);
+            font-size: 24px;
+            color: var(--primary);
+            direction: rtl;
+            margin-top: 8px;
+        }
+        .since {
+            font-family: var(--font-primary);
+            font-style: italic;
+            color: var(--accent-gold);
+            font-size: 15px;
+            letter-spacing: 3px;
+            margin-bottom: 48px;
+        }
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: var(--primary);
+            margin: 32px 0;
+        }
+        p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .divider-gold {
+            width: 80px;
+            height: 2px;
+            background: var(--accent-gold);
+            margin: 32px 0;
+        }
+        .divisions-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 32px 0;
+        }
+        .division-item {
+            padding: 24px;
+            background: var(--surface);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+        .division-item h3 {
+            font-family: var(--font-primary);
+            font-size: 18px;
+            color: var(--secondary);
+            margin-bottom: 4px;
+        }
+        .division-item .ar {
+            font-family: var(--font-arabic);
+            font-size: 14px;
+            color: var(--primary);
+            direction: rtl;
+            text-align: right;
+        }
+        .division-item p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            margin-bottom: 0;
+        }
         @media (max-width: 768px) {
-            .page { padding: 48px 16px; }
+            .page { padding: 80px 16px 60px; }
             h1 { font-size: 28px; }
+            .divisions-list { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -75,34 +139,63 @@
         <a href="../" class="back">&larr; Back to Home</a>
 
         <div class="logo-area">
-            <img src="../assets/images/logo-hero.png" alt="ALMuhalab International Co."
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <h1 style="display:none;">ALMuhalab International Co.</h1>
+            <img src="../assets/images/logo-hero.png" alt="ALMuhalab International Holding Group"
+                 onerror="this.style.display='none';">
         </div>
 
-        <h1>ALMuhalab International Co.</h1>
+        <h1>ALMuhalab International Holding Group
+            <span class="arabic-name">مجموعة المحلب الدولية القابضة</span>
+        </h1>
         <div class="since">&mdash; Since 1977 &mdash;</div>
         <div class="divider"></div>
 
         <p>
-            <strong>ALMuhalab International Co.</strong> has been a trusted name in the industry since 1977,
-            delivering excellence across multiple sectors including general contracting, oil and gas services,
-            and facility management.
+            <strong>ALMuhalab International Holding Group</strong> has been a trusted name in business excellence
+            since 1977, delivering world-class services across healthcare, tourism, general trading, and
+            oil & gas sectors.
+        </p>
+        <p>
+            With over four decades of experience and operations spanning 30+ countries, we pride ourselves
+            on our commitment to quality, innovation, and strategic partnerships. Our diversified portfolio
+            serves the needs of a dynamic, global marketplace.
         </p>
 
-        <p>
-            With over four decades of experience, we pride ourselves on our commitment to quality,
-            innovation, and client satisfaction. Our team of dedicated professionals works tirelessly
-            to provide solutions that meet the highest international standards.
-        </p>
+        <div class="divider-gold"></div>
 
-        <p>
-            <strong>Our Services:</strong> General Contracting, Oil &amp; Gas Services,
-            Facility Management, Project Development, and Engineering Consultancy.
-        </p>
+        <h2 style="font-family: var(--font-primary); color: var(--secondary); margin-bottom: 24px;">Our Divisions</h2>
+
+        <div class="divisions-list">
+            <div class="division-item">
+                <h3>🏥 Medical Group</h3>
+                <div class="ar">المحلب الطبية</div>
+                <p>Hospitals, medical equipment distribution, and pharmaceutical services.</p>
+            </div>
+            <div class="division-item">
+                <h3>✈️ International Tourism</h3>
+                <div class="ar">السياحة الدولية</div>
+                <p>Premium travel, VIP reception, and medical tourism coordination.</p>
+            </div>
+            <div class="division-item">
+                <h3>📦 General Trading</h3>
+                <div class="ar">التجارة العامة</div>
+                <p>International trade, logistics, procurement, and distribution.</p>
+            </div>
+            <div class="division-item">
+                <h3>🛢️ Oil & Gas</h3>
+                <div class="ar">النفط والغاز</div>
+                <p>Exploration support, equipment supply, and energy consulting.</p>
+            </div>
+        </div>
+
+        <div class="divider-gold"></div>
+
+        <h2 style="font-family: var(--font-primary); color: var(--secondary); margin-bottom: 24px;">Contact</h2>
+        <p><strong>Address:</strong> Bahbahani Complex, Sharq, Kuwait City, Kuwait</p>
+        <p><strong>Phone:</strong> +965 22274533</p>
+        <p><strong>Email:</strong> <a href="mailto:info@almuhalab.net" style="color: var(--primary); text-decoration: none;">info@almuhalab.net</a></p>
 
         <br>
-        <a href="../" style="color:#6382ab; text-decoration:none;">&larr; Return to Home</a>
+        <a href="../" style="color: var(--primary); text-decoration: none; font-weight: 600;">&larr; Return to Home</a>
     </div>
 </body>
 </html>

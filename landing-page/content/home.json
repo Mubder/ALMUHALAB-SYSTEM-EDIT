@@ -1,0 +1,333 @@
+{
+    "en": {
+        "site": {
+            "name": "ALMuhalab International Holdings Group",
+            "nameShort": "ALMuhalab",
+            "arabicName": "مجموعة المهلب الدوليه القابضة",
+            "tagline": "Since 1977",
+            "description": "ALMuhalab International Holdings Group — A trusted name in healthcare, tourism, trading, and energy since 1977.",
+            "logo": "assets/images/logo-nav.png",
+            "favicon": "assets/images/favicon.ico"
+        },
+        "nav": {
+            "about": "About",
+            "divisions": "Divisions",
+            "services": "Services",
+            "team": "Our Team",
+            "contact": "Contact",
+            "system": "System"
+        },
+        "hero": {
+            "title": "ALMuhalab",
+            "titleLine2": "International Holdings Group",
+            "arabicName": "مجموعة المهلب الدوليه القابضة",
+            "subtitle": "Delivering excellence across industries for over four decades",
+            "ctaText": "Explore Our Divisions",
+            "ctaLink": "#divisions"
+        },
+        "stats": [
+            { "icon": "📅", "value": "45+", "label": "Years of Excellence" },
+            { "icon": "🌍", "value": "30+", "label": "Countries Served" },
+            { "icon": "🤝", "value": "100+", "label": "Strategic Partners" },
+            { "icon": "🏗️", "value": "500+", "label": "Projects Completed" }
+        ],
+        "about": {
+            "title": "About Us",
+            "subtitle": "Building Trust Since 1977",
+            "content": "For over four decades, ALMuhalab International Holdings Group has been a cornerstone of business excellence in the Middle East. Founded in 1977 in Kuwait, we have grown from a local enterprise into a diversified international holding group with operations spanning healthcare, tourism, general trading, and oil & gas services.",
+            "content2": "Our commitment to quality, innovation, and strategic partnerships has earned us the trust of clients and partners across more than 30 countries. We continue to expand our reach while maintaining the values that have defined us for over 45 years.",
+            "features": [
+                { "icon": "🏥", "title": "Healthcare Excellence", "desc": "Hospitals, medical equipment, and pharmaceuticals" },
+                { "icon": "🌍", "title": "Global Reach", "desc": "Operations across 30+ countries worldwide" },
+                { "icon": "🤝", "title": "Strategic Partnerships", "desc": "100+ trusted international partners" },
+                { "icon": "⚡", "title": "Energy Sector", "desc": "Oil & gas services and solutions" }
+            ]
+        },
+        "divisions": {
+            "title": "Our Divisions",
+            "subtitle": "A diversified portfolio of world-class businesses",
+            "items": [
+                {
+                    "icon": "🛢️",
+                    "title": "ALMuhalab Oil & Gas",
+                    "arabic": "شركة المهلب الدوليه للنفط والغاز",
+                    "description": "Specialized oil and gas services including exploration support, equipment supply, and energy sector consulting solutions.",
+                    "link": "oil-gas/",
+                    "btnText": "Learn More",
+                    "status": "active"
+                },
+                {
+                    "icon": "✈️",
+                    "title": "ALMuhalab Tourism",
+                    "arabic": "شركة المهلب الدوليه للسياحه",
+                    "description": "Premium tourism and travel services, including VIP reception, medical tourism coordination, and luxury hospitality experiences.",
+                    "link": "tourism/",
+                    "btnText": "Learn More",
+                    "status": "active"
+                },
+                {
+                    "icon": "📦",
+                    "title": "ALMuhalab International Co.",
+                    "arabic": "شركة المهلب العالميه للتجاره العامه",
+                    "description": "Comprehensive general trading solutions connecting international markets with expert logistics, procurement, and distribution services.",
+                    "link": "trading/",
+                    "btnText": "Learn More",
+                    "status": "active"
+                }
+            ]
+        },
+        "services": {
+            "title": "Our Services",
+            "subtitle": "Comprehensive solutions across our divisions",
+            "items": [
+                { "icon": "📋", "title": "Medical Case Management", "description": "End-to-end medical case coordination and patient management services", "link": "#" },
+                { "icon": "✅", "title": "Hospital Accreditation", "description": "Expert guidance for international hospital accreditation standards", "link": "#" },
+                { "icon": "🌐", "title": "International Medical Coordination", "description": "Cross-border medical referrals and specialist coordination", "link": "#" },
+                { "icon": "🌟", "title": "VIP Reception & Logistics", "description": "Premium hospitality and logistics for high-profile clients", "link": "#" },
+                { "icon": "📊", "title": "Investment Advisory", "description": "Strategic investment consulting and market entry guidance", "link": "#" },
+                { "icon": "🤝", "title": "Strategic Partnerships", "description": "Building and managing international business partnerships", "link": "#" },
+                { "icon": "🛢️", "title": "Oil & Gas Services", "description": "Exploration support, equipment supply, and energy consulting", "link": "#" },
+                { "icon": "🏗️", "title": "General Contracting", "description": "Construction and building projects with highest quality standards", "link": "#" },
+                { "icon": "🔧", "title": "Facility Management", "description": "Comprehensive maintenance and facility management services", "link": "#" }
+            ]
+        },
+        "team": {
+            "title": "Our Team",
+            "subtitle": "Meet the people behind ALMuhalab",
+            "items": [
+                {
+                    "name": "Ahmed ALMuhalab",
+                    "position": "General Manager",
+                    "image": "assets/images/team/default.jpg",
+                    "bio": "Over 30 years of experience in the contracting and oil services sector.",
+                    "email": "ahmed@almuhalab.net",
+                    "linkedin": "#"
+                },
+                {
+                    "name": "Khalid AlShammari",
+                    "position": "Projects Manager",
+                    "image": "assets/images/team/default.jpg",
+                    "bio": "Specialized in managing major projects with extensive experience in the oil and gas sector.",
+                    "email": "khalid@almuhalab.net",
+                    "linkedin": "#"
+                },
+                {
+                    "name": "Fatima AlRashid",
+                    "position": "Healthcare Director",
+                    "image": "assets/images/team/default.jpg",
+                    "bio": "Leading healthcare operations with a focus on international medical tourism and accreditation.",
+                    "email": "fatima@almuhalab.net",
+                    "linkedin": "#"
+                }
+            ]
+        },
+        "contact": {
+            "title": "Get in Touch",
+            "subtitle": "We'd love to hear from you",
+            "address": "Bahbahani Complex, Sharq, Kuwait City, Kuwait",
+            "phone": "+965 22274533",
+            "email": "info@almuhalab.net",
+            "website": "www.almuhalab.net",
+            "workingHours": "Sunday to Thursday: 8:00 AM - 5:00 PM",
+            "form": {
+                "name": "Your Name",
+                "email": "Email Address",
+                "subject": "Subject",
+                "message": "Your Message",
+                "send": "Send Message"
+            }
+        },
+        "socialMedia": {
+            "title": "Follow Us",
+            "items": [
+                { "platform": "twitter", "url": "https://twitter.com/almuhalab", "icon": "🐦", "label": "Twitter" },
+                { "platform": "linkedin", "url": "https://linkedin.com/company/almuhalab", "icon": "💼", "label": "LinkedIn" },
+                { "platform": "facebook", "url": "https://facebook.com/almuhalab", "icon": "📘", "label": "Facebook" },
+                { "platform": "instagram", "url": "https://instagram.com/almuhalab", "icon": "📷", "label": "Instagram" },
+                { "platform": "youtube", "url": "https://youtube.com/almuhalab", "icon": "📺", "label": "YouTube" }
+            ]
+        },
+        "footer": {
+            "copyright": "© 2026 ALMuhalab International Holdings Group. All rights reserved.",
+            "links": [
+                { "label": "Divisions", "url": "#divisions" },
+                { "label": "Services", "url": "#services" },
+                { "label": "Contact", "url": "#contact" },
+                { "label": "System", "url": "https://app.almuhalab.net" }
+            ]
+        }
+    },
+    "ar": {
+        "site": {
+            "name": "مجموعة المهلب الدوليه القابضة",
+            "nameShort": "ALMuhalab",
+            "arabicName": "مجموعة المهلب الدوليه القابضة",
+            "tagline": "منذ عام 1977",
+            "description": "مجموعة المهلب الدوليه القابضة — اسم موثوق في مجالات الرعاية والسياحة والتجارة والطاقة منذ عام 1977."
+        },
+        "nav": {
+            "about": "عن المجموعة",
+            "divisions": "الأقسام",
+            "services": "الخدمات",
+            "team": "فريقنا",
+            "contact": "تواصل معنا",
+            "system": "النظام"
+        },
+        "hero": {
+            "title": "ALMuhalab",
+            "titleLine2": "الدولية القابضة",
+            "arabicName": "مجموعة المهلب الدوليه القابضة",
+            "subtitle": "نقدّم التميز عبر الصناعات لأكثر من أربعة عقود",
+            "ctaText": "استكشف أقسامنا",
+            "ctaLink": "#divisions"
+        },
+        "stats": [
+            { "icon": "📅", "value": "+٤٥", "label": "سنة من التميز" },
+            { "icon": "🌍", "value": "+٣٠", "label": "دولة نخدمها" },
+            { "icon": "🤝", "value": "+١٠٠", "label": "شريك استراتيجي" },
+            { "icon": "🏗️", "value": "+٥٠٠", "label": "مشروع منجز" }
+        ],
+        "about": {
+            "title": "عن المجموعة",
+            "subtitle": "نبني الثقة منذ عام ١٩٧٧",
+            "content": "على مدى أكثر من أربعة عقود، كانت مجموعة المهلب الدوليه القابضة حجر الأساس للتميز التجاري في الشرق الأوسط. تأسست عام ١٩٧٧ في الكويت، ونمت من مؤسسة محلية إلى مجموعة قابضة دولية متنوعة تعمل في مجالات الرعاية الصحية والسياحة والتجارة العامة وخدمات النفط والغاز.",
+            "content2": "حقّق التزامنا بالجودة والابتكار والشراكات الاستراتيجية ثقة العملاء والشركاء في أكثر من ٣٠ دولة. ونواصل توسيع نطاقنا مع الحفاظ على القيم التي عرّفتنا لأكثر من ٤٥ عاماً.",
+            "features": [
+                { "icon": "🏥", "title": "التميز الصحي", "desc": "مستشفيات ومعدات طبية وأدوية" },
+                { "icon": "🌍", "title": "انتشار عالمي", "desc": "عمليات في أكثر من ٣٠ دولة حول العالم" },
+                { "icon": "🤝", "title": "شراكات استراتيجية", "desc": "أكثر من ١٠٠ شريك دولي موثوق" },
+                { "icon": "⚡", "title": "قطاع الطاقة", "desc": "خدمات وحلول النفط والغاز" }
+            ]
+        },
+        "divisions": {
+            "title": "أقسامنا",
+            "subtitle": "محفظة متنوعة من أعمال عالمية المستوى",
+            "items": [
+                {
+                    "icon": "🛢️",
+                    "title": "شركة المهلب الدوليه للنفط والغاز",
+                    "arabic": "شركة المهلب الدوليه للنفط والغاز",
+                    "description": "خدمات متخصصة للنفط والغاز تشمل دعم الاستكشاف وتوريد المعدات وحلول الاستشارات في قطاع الطاقة.",
+                    "link": "oil-gas/",
+                    "btnText": "اعرف المزيد",
+                    "status": "active"
+                },
+                {
+                    "icon": "✈️",
+                    "title": "شركة المهلب الدوليه للسياحه",
+                    "arabic": "شركة المهلب الدوليه للسياحه",
+                    "description": "خدمات سياحة وسفر فاخرة تشمل الاستقبال VIP والتنسيق الطبي والتجارب الفندقية الراقية.",
+                    "link": "tourism/",
+                    "btnText": "اعرف المزيد",
+                    "status": "active"
+                },
+                {
+                    "icon": "📦",
+                    "title": "شركة المهلب العالميه للتجاره العامه",
+                    "arabic": "شركة المهلب العالميه للتجاره العامه",
+                    "description": "حلول تجارة شاملة تربط الأسواق الدولية مع خدمات اللوجستيات والتوريد والتوزيع المتخصصة.",
+                    "link": "trading/",
+                    "btnText": "اعرف المزيد",
+                    "status": "active"
+                }
+            ]
+        },
+        "services": {
+            "title": "خدماتنا",
+            "subtitle": "حلول شاملة عبر أقسامنا",
+            "items": [
+                { "icon": "📋", "title": "إدارة الحالات الطبية", "description": "تنسيق وإدارة شاملة للحالات الطبية والمتابعة", "link": "#" },
+                { "icon": "✅", "title": "اعتماد المستشفيات", "description": "إرشاد متخصص لمعايير الاعتماد الدولية للمستشفيات", "link": "#" },
+                { "icon": "🌐", "title": "التنسيق الطبي الدولي", "description": "إحالات طبية عبر الحدود وتنسيق الأطباء المتخصصين", "link": "#" },
+                { "icon": "🌟", "title": "استقبال كبار الزوار والخدمات اللوجستية", "description": "ضيافة فاخرة ولوجستيات للعملاء المميزين", "link": "#" },
+                { "icon": "📊", "title": "الاستشارات الاستثمارية", "description": "استشارات استراتيجية واستشارات دخول الأسواق", "link": "#" },
+                { "icon": "🤝", "title": "الشراكات الاستراتيجية", "description": "بناء وإدارة الشراكات التجارية الدولية", "link": "#" },
+                { "icon": "🛢️", "title": "خدمات النفط والغاز", "description": "دعم الاستكشاف وتوريد المعدات والاستشارات في قطاع الطاقة", "link": "#" },
+                { "icon": "🏗️", "title": "المقاولات العامة", "description": "مشاريع البناء والتشييد بأعلى معايير الجودة", "link": "#" },
+                { "icon": "🔧", "title": "إدارة المرافق", "description": "خدمات صيانة وإدارة مرافق شاملة", "link": "#" }
+            ]
+        },
+        "team": {
+            "title": "فريقنا",
+            "subtitle": "تعرّف على الناس وراء ALMuhalab",
+            "items": [
+                {
+                    "name": "أحمد المحلب",
+                    "position": "المدير العام",
+                    "image": "assets/images/team/default.jpg",
+                    "bio": "خبرة تمتد لأكثر من 30 عاماً في قطاع المقاولات والخدمات النفطية.",
+                    "email": "ahmed@almuhalab.net",
+                    "linkedin": "#"
+                },
+                {
+                    "name": "خالد الشمري",
+                    "position": "مدير المشاريع",
+                    "image": "assets/images/team/default.jpg",
+                    "bio": "متخصص في إدارة المشاريع الكبرى مع خبرة واسعة في قطاع النفط والغاز.",
+                    "email": "khalid@almuhalab.net",
+                    "linkedin": "#"
+                },
+                {
+                    "name": "فاطمة الراشد",
+                    "position": "مديرة الرعاية الصحية",
+                    "image": "assets/images/team/default.jpg",
+                    "bio": "قيادة العمليات الصحية مع التركيز على السياحة الطبية والاعتماد الدولي.",
+                    "email": "fatima@almuhalab.net",
+                    "linkedin": "#"
+                }
+            ]
+        },
+        "contact": {
+            "title": "تواصل معنا",
+            "subtitle": "يسعدنا التواصل معك",
+            "address": "مجمع بهبهاني، شرق، مدينة الكويت، الكويت",
+            "phone": "+965 22274533",
+            "email": "info@almuhalab.net",
+            "website": "www.almuhalab.net",
+            "workingHours": "الأحد إلى الخميس: 8:00 ص - 5:00 م",
+            "form": {
+                "name": "الاسم الكامل",
+                "email": "البريد الإلكتروني",
+                "subject": "الموضوع",
+                "message": "رسالتك",
+                "send": "إرسال الرسالة"
+            }
+        },
+        "socialMedia": {
+            "title": "تابعنا",
+            "items": [
+                { "platform": "twitter", "url": "https://twitter.com/almuhalab", "icon": "🐦", "label": "تويتر" },
+                { "platform": "linkedin", "url": "https://linkedin.com/company/almuhalab", "icon": "💼", "label": "لينكدإن" },
+                { "platform": "facebook", "url": "https://facebook.com/almuhalab", "icon": "📘", "label": "فيسبوك" },
+                { "platform": "instagram", "url": "https://instagram.com/almuhalab", "icon": "📷", "label": "إنستغرام" },
+                { "platform": "youtube", "url": "https://youtube.com/almuhalab", "icon": "📺", "label": "يوتيوب" }
+            ]
+        },
+        "footer": {
+            "copyright": "© ٢٠٢٦ مجموعة المهلب الدوليه القابضة. جميع الحقوق محفوظة.",
+            "links": [
+                { "label": "الأقسام", "url": "#divisions" },
+                { "label": "الخدمات", "url": "#services" },
+                { "label": "تواصل معنا", "url": "#contact" },
+                { "label": "النظام", "url": "https://app.almuhalab.net" }
+            ]
+        }
+    },
+    "theme": {
+        "primaryColor": "#006B6B",
+        "secondaryColor": "#004D4D",
+        "accentColor": "#C8A951",
+        "backgroundColor": "#F5F7FA",
+        "surfaceColor": "#FFFFFF",
+        "textPrimary": "#1A1A2E",
+        "textSecondary": "#4A5568",
+        "textMuted": "#A0AEC0",
+        "successColor": "#38B27A",
+        "infoColor": "#3182CE",
+        "warningColor": "#DD6B20",
+        "dangerColor": "#E53E3E",
+        "gradientStart": "#006B6B",
+        "gradientEnd": "#00897B",
+        "goldAccent": "#C8A951"
+    }
+}

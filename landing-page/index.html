@@ -1,91 +1,174 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ALMuhalab International Co.</title>
-    <meta name="description" content="ALMuhalab International Co. - Since 1977">
+    <title>ALMuhalab International Holding Group</title>
+    <meta name="description" content="ALMuhalab International Holding Group - Delivering excellence across industries since 1977. Healthcare, Tourism, Trading, Oil & Gas.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 
     <!-- ============================================================
-         CONFIGURATION
-         To change logos: replace the image files in assets/images/
-         To change text/links: edit directly in the HTML sections below
+         ALMuhalab International Holding Group
+         Corporate Landing Page
+         Brand: Teal/Green (#006B6B) + Navy (#1A2B4B) + Gold (#D4A843)
          ============================================================ -->
 </head>
 <body>
 
     <!-- ─── Navigation ─── -->
-    <nav class="nav">
-        <img src="assets/images/logo-nav.png" alt="ALMuhalab" class="nav-logo"
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-        <span style="display:none; font-family:'Old Standard TT',serif; font-size:20px; letter-spacing:2px; color:#fff;">
-            ALMuhalab
-        </span>
-        <ul class="nav-links">
-            <li><a href="#divisions">Divisions</a></li>
-            <li><a href="company/">Company</a></li>
-            <li><a href="https://app.almuhalab.net">System</a></li>
-        </ul>
+    <nav class="nav" id="nav">
+        <div class="nav-left">
+            <img src="assets/images/logo-nav.png" alt="ALMuhalab" class="nav-logo"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="nav-brand" style="display:none;">
+                <span class="nav-brand-name" data-i18n="site.nameShort">ALMuhalab</span>
+                <span class="nav-brand-tagline" data-i18n="site.tagline">Since 1977</span>
+            </div>
+        </div>
+        <div class="nav-right">
+            <ul class="nav-links">
+                <li><a href="#about" data-i18n="nav.about">About</a></li>
+                <li><a href="#divisions" data-i18n="nav.divisions">Divisions</a></li>
+                <li><a href="#services" data-i18n="nav.services">Services</a></li>
+                <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+                <li><a href="https://app.almuhalab.net" data-i18n="nav.system">System</a></li>
+            </ul>
+            <div class="lang-toggle">
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="ar">عربي</button>
+            </div>
+        </div>
     </nav>
 
-    <!-- ─── Hero ─── -->
-    <section class="hero">
-        <img src="assets/images/logo-hero.png" alt="ALMuhalab International Co." class="hero-logo"
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-        <h1 style="display:none; font-family:'Old Standard TT',serif; font-size:56px; letter-spacing:4px; color:#fff;">
-            ALMuhalab<br><span>International</span> Co.
+    <!-- ─── Hero Section ─── -->
+    <section class="hero" id="hero">
+        <img src="assets/images/logo-hero.png" alt="ALMuhalab International Holding Group" class="hero-logo"
+             onerror="this.style.display='none';">
+        <h1>
+            <span data-i18n="hero.title">ALMuhalab</span><br>
+            <span data-i18n="hero.titleLine2">International Holding Group</span>
+            <span class="arabic-name" data-i18n="hero.arabicName">مجموعة المحلب الدولية القابضة</span>
         </h1>
-        <h1>ALMuhalab<br><span>International</span> Co.</h1>
-        <p>Serving excellence across industries since 1977</p>
-        <div class="since">&mdash; Since 1977 &mdash;</div>
+        <p class="hero-subtitle" data-i18n="hero.subtitle">Delivering excellence across industries for over four decades</p>
+        <div class="since" data-i18n="site.tagline">— Since 1977 —</div>
+        <div class="hero-cta">
+            <a href="#divisions" class="btn-primary" data-i18n="hero.ctaText">Explore Our Divisions</a>
+        </div>
+    </section>
+
+    <!-- ─── Stats Section ─── -->
+    <section class="stats-section" id="stats">
+        <div class="stats-grid" id="statsGrid">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- ─── About Section ─── -->
+    <section class="section-light" id="about">
+        <div class="section" style="padding-top: 96px; padding-bottom: 96px;">
+            <div class="section-title">
+                <h2 data-i18n="about.title">About Us</h2>
+                <div class="section-divider"></div>
+                <p class="subtitle" data-i18n="about.subtitle">Building Trust Since 1977</p>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p data-i18n="about.content">For over four decades, ALMuhalab International Holding Group has been a cornerstone of business excellence in the Middle East.</p>
+                    <p data-i18n="about.content2">Our commitment to quality, innovation, and strategic partnerships has earned us the trust of clients and partners across more than 30 countries.</p>
+                </div>
+                <div class="about-features" id="aboutFeatures">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- ─── Divisions Section ─── -->
     <section class="section" id="divisions">
         <div class="section-title">
-            <h2>Our Divisions</h2>
-            <div class="divider"></div>
-            <p>Explore our areas of expertise and digital services</p>
+            <h2 data-i18n="divisions.title">Our Divisions</h2>
+            <div class="section-divider"></div>
+            <p class="subtitle" data-i18n="divisions.subtitle">A diversified portfolio of world-class businesses</p>
         </div>
+        <div class="cards" id="divisionsCards">
+            <!-- Populated by JS -->
+        </div>
+    </section>
 
-        <div class="cards">
-
-            <!-- Section 1: Main Company Site -->
-            <div class="card" onclick="window.location.href='company/'">
-                <div class="card-icon">&#127970;</div>
-                <h3>Main Company Site</h3>
-                <p>Explore ALMuhalab International Co. — our history, services, and portfolio since 1977.</p>
-                <a href="company/" class="btn">Visit Site</a>
+    <!-- ─── Services Section ─── -->
+    <section class="section-light" id="services">
+        <div class="section" style="padding-top: 96px; padding-bottom: 96px;">
+            <div class="section-title">
+                <h2 data-i18n="services.title">Our Services</h2>
+                <div class="section-divider"></div>
+                <p class="subtitle" data-i18n="services.subtitle">Comprehensive solutions across our divisions</p>
             </div>
-
-            <!-- Section 2: Oil & Drilling -->
-            <div class="card" onclick="window.location.href='oil-drilling/'">
-                <div class="card-icon">&#128293;</div>
-                <h3>Oil &amp; Drilling Division</h3>
-                <p>Specialized solutions for the oil and gas industry — coming soon.</p>
-                <a href="oil-drilling/" class="btn btn-ghost">Learn More</a>
+            <div class="services-grid" id="servicesGrid">
+                <!-- Populated by JS -->
             </div>
+        </div>
+    </section>
 
-            <!-- Section 3: ALMUHALAB System -->
-            <div class="card" onclick="window.location.href='https://app.almuhalab.net'">
-                <div class="card-icon">&#9881;</div>
-                <h3>ALMUHALAB System</h3>
-                <p>Service request management platform for streamlined operations and workflow automation.</p>
-                <a href="https://app.almuhalab.net" class="btn">Open System</a>
+    <!-- ─── Contact Section ─── -->
+    <section class="contact-section" id="contact">
+        <div class="section-title">
+            <h2 style="color: #fff;" data-i18n="contact.title">Get in Touch</h2>
+            <div class="section-divider" style="background: var(--accent-gold);"></div>
+            <p class="subtitle" style="color: rgba(255,255,255,0.7);" data-i18n="contact.subtitle">We'd love to hear from you</p>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-item-icon">📍</div>
+                    <div class="contact-item-text">
+                        <span class="contact-item-label">Address</span>
+                        <span class="contact-item-value" data-i18n="contact.address">Bahbahani Complex, Sharq, Kuwait City, Kuwait</span>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-icon">📞</div>
+                    <div class="contact-item-text">
+                        <span class="contact-item-label">Phone</span>
+                        <a href="tel:+96522274533" class="contact-item-value" data-i18n="contact.phone">+965 22274533</a>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-item-icon">✉️</div>
+                    <div class="contact-item-text">
+                        <span class="contact-item-label">Email</span>
+                        <a href="mailto:info@almuhalab.net" class="contact-item-value" data-i18n="contact.email">info@almuhalab.net</a>
+                    </div>
+                </div>
             </div>
-
+            <form class="contact-form" onsubmit="return false;">
+                <input type="text" data-i18n-placeholder="contact.form.name" placeholder="Your Name">
+                <input type="email" data-i18n-placeholder="contact.form.email" placeholder="Email Address">
+                <input type="text" data-i18n-placeholder="contact.form.subject" placeholder="Subject">
+                <textarea data-i18n-placeholder="contact.form.message" placeholder="Your Message"></textarea>
+                <button type="submit" class="btn-primary" data-i18n="contact.form.send" style="width: 100%;">Send Message</button>
+            </form>
         </div>
     </section>
 
     <!-- ─── Footer ─── -->
     <footer class="footer">
-        <p>&copy; 2026 ALMuhalab International Co. All rights reserved.</p>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span>ALMuhalab</span> <span class="gold">International Holding Group</span>
+            </div>
+            <div class="footer-arabic">مجموعة المحلب الدولية القابضة</div>
+            <div class="footer-divider"></div>
+            <div class="footer-links" id="footerLinks">
+                <!-- Populated by JS -->
+            </div>
+            <div class="footer-copyright" data-i18n="footer.copyright">© 2026 ALMuhalab International Holding Group. All rights reserved.</div>
+        </div>
     </footer>
 
+    <script src="js/main.js"></script>
 </body>
 </html>
