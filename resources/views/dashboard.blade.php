@@ -30,14 +30,22 @@
     border-radius: var(--radius-lg);
     padding: 1.25rem 1.5rem;
     border: 1px solid transparent;
-    transition: transform .15s, box-shadow .15s;
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+    cursor: pointer;
 }
-.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: rgba(0,0,0,.08); }
 .stat-card .stat-value { font-size: 2rem; font-weight: 700; line-height: 1; }
 .stat-card .stat-label { font-size: .78rem; font-weight: 500; opacity: .75; margin-top: .25rem; text-transform: uppercase; letter-spacing: .05em; }
 .stat-card .stat-icon  { font-size: 2rem; opacity: .2; }
 
 .stage-bar-wrap { height: 6px; background: var(--bs-gray-200); border-radius: 99px; overflow: hidden; }
+
+.hover-stage-card { transition: transform .15s, box-shadow .15s, border-color .15s; cursor: pointer; }
+.hover-stage-card:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,.04); border-color: var(--primary) !important; }
+
+.hover-service-row { display: block; text-decoration: none; color: inherit; cursor: pointer; }
+.hover-service-row .service-item-wrap { padding: .25rem .5rem; border-radius: 6px; transition: background-color .15s, transform .15s; }
+.hover-service-row:hover .service-item-wrap { background-color: var(--bs-gray-100); transform: translateX(2px); }
 .stage-bar      { height: 100%; border-radius: 99px; transition: width .5s ease; }
 
 .overdue-badge { animation: pulse-red 1.8s infinite; }
@@ -98,72 +106,84 @@
 {{-- ── Stat Cards ───────────────────────────────────────────── --}}
 <div class="row g-3 mb-4">
     <div class="col-6 col-xl">
-        <div class="stat-card bg-white border" style="border-left:4px solid #2563eb !important">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-value text-primary">{{ $total }}</div>
-                    <div class="stat-label text-muted">{{ __('Total Requests') }}</div>
+        <a href="{{ route('service-requests.index') }}" class="text-decoration-none d-block">
+            <div class="stat-card bg-white border h-100" style="border-left:4px solid #2563eb !important">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-primary">{{ $total }}</div>
+                        <div class="stat-label text-muted">{{ __('Total Requests') }}</div>
+                    </div>
+                    <span class="rounded-3 p-2 bg-primary-subtle text-primary" style="font-size:1.3rem"><i class="bi bi-folder2-open"></i></span>
                 </div>
-                <span class="rounded-3 p-2 bg-primary-subtle text-primary" style="font-size:1.3rem"><i class="bi bi-folder2-open"></i></span>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-6 col-xl">
-        <div class="stat-card bg-white border" style="border-left:4px solid #0891b2 !important">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-value text-info">{{ $newCount }}</div>
-                    <div class="stat-label text-muted">{{ __('New / Inbox') }}</div>
+        <a href="{{ route('service-requests.index', ['stage' => 1]) }}" class="text-decoration-none d-block">
+            <div class="stat-card bg-white border h-100" style="border-left:4px solid #0891b2 !important">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-info">{{ $newCount }}</div>
+                        <div class="stat-label text-muted">{{ __('New / Inbox') }}</div>
+                    </div>
+                    <span class="rounded-3 p-2 bg-info-subtle text-info" style="font-size:1.3rem"><i class="bi bi-inbox"></i></span>
                 </div>
-                <span class="rounded-3 p-2 bg-info-subtle text-info" style="font-size:1.3rem"><i class="bi bi-inbox"></i></span>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-6 col-xl">
-        <div class="stat-card bg-white border" style="border-left:4px solid #d97706 !important">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-value text-warning">{{ $active }}</div>
-                    <div class="stat-label text-muted">{{ __('In Progress') }}</div>
+        <a href="{{ route('service-requests.index', ['active' => 1]) }}" class="text-decoration-none d-block">
+            <div class="stat-card bg-white border h-100" style="border-left:4px solid #d97706 !important">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-warning">{{ $active }}</div>
+                        <div class="stat-label text-muted">{{ __('In Progress') }}</div>
+                    </div>
+                    <span class="rounded-3 p-2 bg-warning-subtle text-warning" style="font-size:1.3rem"><i class="bi bi-activity"></i></span>
                 </div>
-                <span class="rounded-3 p-2 bg-warning-subtle text-warning" style="font-size:1.3rem"><i class="bi bi-activity"></i></span>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-6 col-xl">
-        <div class="stat-card bg-white border" style="border-left:4px solid #16a34a !important">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-value text-success">{{ $closed }}</div>
-                    <div class="stat-label text-muted">{{ __('Closed') }}</div>
+        <a href="{{ route('service-requests.index', ['closed' => 1]) }}" class="text-decoration-none d-block">
+            <div class="stat-card bg-white border h-100" style="border-left:4px solid #16a34a !important">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-success">{{ $closed }}</div>
+                        <div class="stat-label text-muted">{{ __('Closed') }}</div>
+                    </div>
+                    <span class="rounded-3 p-2 bg-success-subtle text-success" style="font-size:1.3rem"><i class="bi bi-check-circle"></i></span>
                 </div>
-                <span class="rounded-3 p-2 bg-success-subtle text-success" style="font-size:1.3rem"><i class="bi bi-check-circle"></i></span>
             </div>
-        </div>
+        </a>
     </div>
     @if(!$isClient)
     <div class="col-6 col-xl">
-        <div class="stat-card bg-white border" style="border-left:4px solid #dc2626 !important">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-value text-danger">{{ $rejected }}</div>
-                    <div class="stat-label text-muted">{{ __('Rejected') }}</div>
+        <a href="{{ route('service-requests.index', ['rejected' => 1]) }}" class="text-decoration-none d-block">
+            <div class="stat-card bg-white border h-100" style="border-left:4px solid #dc2626 !important">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value text-danger">{{ $rejected }}</div>
+                        <div class="stat-label text-muted">{{ __('Rejected') }}</div>
+                    </div>
+                    <span class="rounded-3 p-2 bg-danger-subtle text-danger" style="font-size:1.3rem"><i class="bi bi-x-circle"></i></span>
                 </div>
-                <span class="rounded-3 p-2 bg-danger-subtle text-danger" style="font-size:1.3rem"><i class="bi bi-x-circle"></i></span>
             </div>
-        </div>
+        </a>
     </div>
     @if($avgDays !== null)
     <div class="col-6 col-xl">
-        <div class="stat-card bg-white border" style="border-left:4px solid #7c3aed !important">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-value" style="color:#7c3aed">{{ $avgDays }}</div>
-                    <div class="stat-label text-muted">{{ __('Avg. Days to Close') }}</div>
+        <a href="{{ route('service-requests.index', ['closed' => 1]) }}" class="text-decoration-none d-block">
+            <div class="stat-card bg-white border h-100" style="border-left:4px solid #7c3aed !important">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-value" style="color:#7c3aed">{{ $avgDays }}</div>
+                        <div class="stat-label text-muted">{{ __('Avg. Days to Close') }}</div>
+                    </div>
+                    <span class="rounded-3 p-2" style="background:rgba(124,58,237,.1);color:#7c3aed;font-size:1.3rem"><i class="bi bi-stopwatch"></i></span>
                 </div>
-                <span class="rounded-3 p-2" style="background:rgba(124,58,237,.1);color:#7c3aed;font-size:1.3rem"><i class="bi bi-stopwatch"></i></span>
             </div>
-        </div>
+        </a>
     </div>
     @endif
     @endif
@@ -200,21 +220,23 @@
                         $pct = $total > 0 ? round($cnt / $total * 100) : 0;
                     @endphp
                     <div class="col-6">
-                        <div class="d-flex align-items-center gap-2 p-2 rounded-2 border bg-white">
-                            <span class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 text-{{ $cfg['color'] }} bg-{{ $cfg['color'] }}-subtle"
-                                  style="width:32px;height:32px;font-size:.85rem">
-                                <i class="bi {{ $cfg['icon'] }}"></i>
-                            </span>
-                            <div class="flex-grow-1 overflow-hidden">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <span class="small fw-600 text-truncate" style="font-size:.73rem">{{ __($cfg['label']) }}</span>
-                                    <span class="fw-700 small text-{{ $cfg['color'] }}">{{ $cnt }}</span>
-                                </div>
-                                <div class="stage-bar-wrap">
-                                    <div class="stage-bar bg-{{ $cfg['color'] }}" style="width:{{ $pct }}%"></div>
+                        <a href="{{ route('service-requests.index', ['stage' => $n]) }}" class="text-decoration-none text-dark d-block">
+                            <div class="d-flex align-items-center gap-2 p-2 rounded-2 border bg-white hover-stage-card">
+                                <span class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 text-{{ $cfg['color'] }} bg-{{ $cfg['color'] }}-subtle"
+                                      style="width:32px;height:32px;font-size:.85rem">
+                                    <i class="bi {{ $cfg['icon'] }}"></i>
+                                </span>
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="small fw-600 text-truncate" style="font-size:.73rem">{{ __($cfg['label']) }}</span>
+                                        <span class="fw-700 small text-{{ $cfg['color'] }}">{{ $cnt }}</span>
+                                    </div>
+                                    <div class="stage-bar-wrap">
+                                        <div class="stage-bar bg-{{ $cfg['color'] }}" style="width:{{ $pct }}%"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 @endforeach
             </div>
@@ -231,15 +253,17 @@
                 <div class="d-flex flex-column gap-2">
                     @foreach($byServiceType->take(7) as $st)
                     @php $stPct = $total > 0 ? round($st['total'] / $total * 100) : 0; @endphp
-                    <div>
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="small text-truncate me-2" style="font-size:.75rem;max-width:65%">{{ $st['name'] }}</span>
-                            <span class="fw-700 small text-primary">{{ $st['total'] }}</span>
+                    <a href="{{ route('service-requests.index', ['service_type_id' => $st['id']]) }}" class="hover-service-row">
+                        <div class="service-item-wrap">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="small text-truncate me-2" style="font-size:.75rem;max-width:65%">{{ $st['name'] }}</span>
+                                <span class="fw-700 small text-primary">{{ $st['total'] }}</span>
+                            </div>
+                            <div class="stage-bar-wrap">
+                                <div class="stage-bar bg-warning" style="width:{{ $stPct }}%"></div>
+                            </div>
                         </div>
-                        <div class="stage-bar-wrap">
-                            <div class="stage-bar bg-warning" style="width:{{ $stPct }}%"></div>
-                        </div>
-                    </div>
+                    </a>
                     @endforeach
                 </div>
             @endif

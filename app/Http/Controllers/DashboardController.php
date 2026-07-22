@@ -121,6 +121,7 @@ class DashboardController extends Controller
             ->groupBy('service_type_id')
             ->get()
             ->map(fn($r) => [
+                'id'    => $r->service_type_id,
                 'name'  => $r->serviceType->name ?? __('Unknown'),
                 'total' => $r->total,
             ])

@@ -171,7 +171,7 @@
     </div>
 
     {{-- ── Stage Progress Bar ───────────────────────────────── --}}
-    <div class="page-card mb-4 py-3 px-2">
+    <div class="page-card mb-4 py-3 px-3">
         <div class="stage-progress">
             @foreach($stages as $num => $cfg)
                 @php

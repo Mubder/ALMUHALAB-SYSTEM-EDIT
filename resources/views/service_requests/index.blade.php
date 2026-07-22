@@ -1,39 +1,64 @@
 @extends('layouts.app')
 @section('title', __('Service Requests'))
 
+@push('styles')
+<style>
+.stat-card-clickable {
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+    cursor: pointer;
+    border: 1px solid var(--color-border, #dee2e6) !important;
+}
+.stat-card-clickable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    border-color: var(--primary, #3e597d) !important;
+}
+</style>
+@endpush
+
 @section('content')
 
 {{-- Stats Bar --}}
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3 col-xl">
-        <div class="stat-card card text-center py-3 px-2 bg-white">
-            <div class="fs-2 fw-bold text-dark">{{ $stats['total'] }}</div>
-            <div class="small text-muted mt-1">{{ __('Total') }}</div>
-        </div>
+        <a href="{{ route('service-requests.index') }}" class="text-decoration-none d-block">
+            <div class="stat-card-clickable card text-center py-3 px-2 bg-white h-100">
+                <div class="fs-2 fw-bold text-dark">{{ $stats['total'] }}</div>
+                <div class="small text-muted mt-1">{{ __('Total') }}</div>
+            </div>
+        </a>
     </div>
     <div class="col-6 col-md-3 col-xl">
-        <div class="stat-card card text-center py-3 px-2 bg-white">
-            <div class="fs-2 fw-bold text-primary">{{ $stats['new'] }}</div>
-            <div class="small text-muted mt-1">{{ __('New') }}</div>
-        </div>
+        <a href="{{ route('service-requests.index', ['status' => 'New']) }}" class="text-decoration-none d-block">
+            <div class="stat-card-clickable card text-center py-3 px-2 bg-white h-100">
+                <div class="fs-2 fw-bold text-primary">{{ $stats['new'] }}</div>
+                <div class="small text-muted mt-1">{{ __('New') }}</div>
+            </div>
+        </a>
     </div>
     <div class="col-6 col-md-3 col-xl">
-        <div class="stat-card card text-center py-3 px-2 bg-white">
-            <div class="fs-2 fw-bold text-info">{{ $stats['under_review'] }}</div>
-            <div class="small text-muted mt-1">{{ __('Under Review') }}</div>
-        </div>
+        <a href="{{ route('service-requests.index', ['status' => 'Under Review']) }}" class="text-decoration-none d-block">
+            <div class="stat-card-clickable card text-center py-3 px-2 bg-white h-100">
+                <div class="fs-2 fw-bold text-info">{{ $stats['under_review'] }}</div>
+                <div class="small text-muted mt-1">{{ __('Under Review') }}</div>
+            </div>
+        </a>
     </div>
     <div class="col-6 col-md-3 col-xl">
-        <div class="stat-card card text-center py-3 px-2 bg-white">
-            <div class="fs-2 fw-bold text-success">{{ $stats['approved'] }}</div>
-            <div class="small text-muted mt-1">{{ __('Approved') }}</div>
-        </div>
+        <a href="{{ route('service-requests.index', ['status' => 'Approved']) }}" class="text-decoration-none d-block">
+            <div class="stat-card-clickable card text-center py-3 px-2 bg-white h-100">
+                <div class="fs-2 fw-bold text-success">{{ $stats['approved'] }}</div>
+                <div class="small text-muted mt-1">{{ __('Approved') }}</div>
+            </div>
+        </a>
     </div>
     <div class="col-6 col-md-3 col-xl">
-        <div class="stat-card card text-center py-3 px-2 bg-white">
-            <div class="fs-2 fw-bold text-secondary">{{ $stats['completed'] }}</div>
-            <div class="small text-muted mt-1">{{ __('Completed') }}</div>
-        </div>
+        <a href="{{ route('service-requests.index', ['status' => 'Completed']) }}" class="text-decoration-none d-block">
+            <div class="stat-card-clickable card text-center py-3 px-2 bg-white h-100">
+                <div class="fs-2 fw-bold text-secondary">{{ $stats['completed'] }}</div>
+                <div class="small text-muted mt-1">{{ __('Completed') }}</div>
+            </div>
+        </a>
     </div>
 </div>
 

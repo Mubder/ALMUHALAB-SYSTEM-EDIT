@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="{{ config('app.name') }} — Service Request Management">
     <title>@yield('title', 'Dashboard') — {{ config('app.name', 'Case System') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/Logo.png') }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -529,7 +530,7 @@
             gap: 0;
             overflow-x: auto;
             scrollbar-width: none;
-            padding: .25rem 0;
+            padding: .25rem 8px;
         }
         .stage-progress::-webkit-scrollbar { display: none; }
 
@@ -606,7 +607,7 @@
         /* current */
         .stage-step.current .stage-card {
             background: #eff6ff;
-            box-shadow: 0 0 0 2px var(--color-primary);
+            box-shadow: 0 0 0 2px var(--color-primary), 0 4px 12px rgba(37,99,235,.12);
         }
         .stage-step.current .stage-circle {
             background: var(--color-primary); border-color: var(--color-primary); color: #fff;
@@ -623,7 +624,7 @@
         .stage-step.future .stage-status-badge { display: none; }
 
         /* rejected */
-        .stage-step.rejected .stage-card   { background: #fff1f2; box-shadow: 0 0 0 2px var(--color-danger); }
+        .stage-step.rejected .stage-card   { background: #fff1f2; box-shadow: 0 0 0 2px var(--color-danger), 0 4px 12px rgba(220,38,38,.12); }
         .stage-step.rejected .stage-circle { background: var(--color-danger); border-color: var(--color-danger); color: #fff; }
         .stage-step.rejected .stage-name   { color: var(--color-danger); }
         .stage-step.rejected .stage-status-badge { background: #fee2e2; color: #991b1b; }

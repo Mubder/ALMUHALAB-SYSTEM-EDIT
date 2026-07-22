@@ -55,6 +55,30 @@ class ServiceRequestController extends Controller
             $query->where('service_type_id', $typeId);
         }
 
+        if ($stage = $request->input('stage')) {
+            $query->where('current_stage', $stage);
+        }
+
+        if ($request->boolean('active')) {
+            $query->whereBetween('current_stage', [2, 6])->where('is_rejected', false);
+        }
+
+        if ($request->boolean('closed')) {
+            $query->where(function ($q) {
+                $q->where('stage_status', 'Closed')->orWhere('is_rejected', true);
+            });
+        }
+
+        if ($request->boolean('rejected')) {
+            $query->where('is_rejected', true);
+        }
+
+        if ($request->boolean('overdue')) {
+            $query->where('is_rejected', false)
+                  ->where('stage_status', '!=', 'Closed')
+                  ->where('stage_entered_at', '<', now()->subDays(5));
+        }
+
         if ($from = $request->input('date_from')) {
             $query->whereDate('created_at', '>=', $from);
         }
