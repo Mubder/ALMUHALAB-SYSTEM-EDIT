@@ -33,6 +33,42 @@ class ServiceRequest extends Model
         ];
     }
 
+    protected static function booted()
+    {
+        static::created(function ($sr) {
+            try {
+                $webhookUrl = env('KCA_WEBHOOK_URL', 'https://app.kazma.ai/api/v1/integrations/almuhalab/webhook');
+                $secret = env('KCA_BRIDGE_TOKEN');
+                if ($webhookUrl && $secret) {
+                    $client = new \GuzzleHttp\Client();
+                    $client->postAsync($webhookUrl, [
+                        'headers' => [
+                            'Authorization' => "Bearer {$secret}",
+                            'Accept'        => 'application/json',
+                        ],
+                        'json' => [
+                            'event' => 'request.created',
+                            'data'  => [
+                                'id' => $sr->id,
+                                'display_number' => $sr->display_number,
+                                'title' => $sr->title,
+                                'description' => $sr->description,
+                                'client_name' => $sr->client_name,
+                                'client_phone' => $sr->client_phone,
+                                'client_email' => $sr->client_email,
+                                'current_stage' => $sr->current_stage,
+                                'status' => $sr->status,
+                            ],
+                            'timestamp' => now()->toIso8601String()
+                        ]
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                // Ignore fallback
+            }
+        });
+    }
+
     // ── Relationships ─────────────────────────────────────────────────
 
     public function user()

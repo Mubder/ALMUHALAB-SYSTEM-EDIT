@@ -157,6 +157,15 @@ class WorkflowService
         });
 
         self::safeNotifyTransition($sr, $fromStage, $toStage, 'advanced', $actor);
+        self::triggerKcaWebhook('stage.advanced', [
+            'id' => $sr->id,
+            'display_number' => $sr->display_number,
+            'from_stage' => $fromStage,
+            'to_stage' => $toStage,
+            'stage_status' => $sr->stage_status,
+            'actor_email' => $actor->email,
+            'notes' => $notes
+        ]);
     }
 
     public static function returnToPreviousStage(ServiceRequest $sr, User $actor, ?string $notes = null): void
@@ -183,6 +192,15 @@ class WorkflowService
         });
 
         self::safeNotifyTransition($sr, $fromStage, $toStage, 'returned', $actor);
+        self::triggerKcaWebhook('stage.returned', [
+            'id' => $sr->id,
+            'display_number' => $sr->display_number,
+            'from_stage' => $fromStage,
+            'to_stage' => $toStage,
+            'stage_status' => $sr->stage_status,
+            'actor_email' => $actor->email,
+            'notes' => $notes
+        ]);
     }
 
     public static function forceTransition(ServiceRequest $sr, User $actor, int $toStage, ?string $notes = null): void
@@ -211,6 +229,16 @@ class WorkflowService
                 'from_stage' => $fromStage, 'to_stage' => $toStage, 'notes' => $notes,
             ]);
         });
+
+        self::triggerKcaWebhook('stage.force_transitioned', [
+            'id' => $sr->id,
+            'display_number' => $sr->display_number,
+            'from_stage' => $fromStage,
+            'to_stage' => $toStage,
+            'stage_status' => $sr->stage_status,
+            'actor_email' => $actor->email,
+            'notes' => $notes
+        ]);
     }
 
     public static function updateStatus(ServiceRequest $sr, User $actor, string $newStatus, ?string $notes = null): void
@@ -241,6 +269,15 @@ class WorkflowService
         });
 
         self::safeNotifyStatusChange($sr, $oldStatus, $newStatus, $actor);
+        self::triggerKcaWebhook('status.updated', [
+            'id' => $sr->id,
+            'display_number' => $sr->display_number,
+            'stage' => $sr->current_stage,
+            'from_status' => $oldStatus,
+            'to_status' => $newStatus,
+            'actor_email' => $actor->email,
+            'notes' => $notes
+        ]);
     }
 
     // ── Internal Helpers ─────────────────────────────────────────────
@@ -270,6 +307,34 @@ class WorkflowService
             'subject_id'   => $sr->id,
             'changes'      => $changes,
         ]);
+    }
+
+    private static function triggerKcaWebhook(string $event, array $data): void
+    {
+        try {
+            $webhookUrl = env('KCA_WEBHOOK_URL', 'https://app.kazma.ai/api/v1/integrations/almuhalab/webhook');
+            $secret = env('KCA_BRIDGE_TOKEN');
+            
+            if (!$webhookUrl || !$secret) {
+                return;
+            }
+
+            $client = new \GuzzleHttp\Client();
+            $client->postAsync($webhookUrl, [
+                'headers' => [
+                    'Authorization' => "Bearer {$secret}",
+                    'Accept'        => 'application/json',
+                    'Content-Type'  => 'application/json',
+                ],
+                'json' => [
+                    'event' => $event,
+                    'data'  => $data,
+                    'timestamp' => now()->toIso8601String()
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('KCA Webhook dispatch failed: ' . $e->getMessage());
+        }
     }
 
     private static function notifyTransition(ServiceRequest $sr, int $fromStage, int $toStage, string $action, User $actor): void

@@ -250,6 +250,19 @@ Route::middleware('auth')->group(function () {
         });
 });
 
+// ── KCA Unified Integration API (Secured with 'kca.token' Middleware) ────
+Route::prefix('api/kca')
+    ->middleware('kca.token')
+    ->group(function () {
+        Route::get('/requests',          [\App\Http\Controllers\KcaApiController::class, 'getRequests']);
+        Route::get('/requests/{id}',     [\App\Http\Controllers\KcaApiController::class, 'getRequestDetails']);
+        Route::post('/requests/{id}/comment', [\App\Http\Controllers\KcaApiController::class, 'addComment']);
+        Route::post('/requests/{id}/advance', [\App\Http\Controllers\KcaApiController::class, 'advanceStage']);
+        Route::post('/requests/{id}/assign',  [\App\Http\Controllers\KcaApiController::class, 'assignRequest']);
+        Route::get('/users',             [\App\Http\Controllers\KcaApiController::class, 'getUsers']);
+        Route::get('/audit-logs',        [\App\Http\Controllers\KcaApiController::class, 'getAuditLogs']);
+    });
+
 require __DIR__.'/auth.php';
 
 // Landing page — catch-all at the end to avoid conflicting with named routes
