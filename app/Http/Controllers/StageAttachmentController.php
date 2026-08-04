@@ -78,8 +78,12 @@ class StageAttachmentController extends Controller
                 }
 
                 $fullPath = storage_path("app/public/{$path}");
-                $size = file_exists($fullPath) ? filesize($fullPath) : 0;
-                $mimeType = file_exists($fullPath) ? mime_content_type($fullPath) : 'application/octet-stream';
+                $size = 0;
+                $mimeType = 'application/octet-stream';
+                if (file_exists($fullPath) && !is_dir($fullPath)) {
+                    $size = @filesize($fullPath) ?: 0;
+                    $mimeType = @mime_content_type($fullPath) ?: 'application/octet-stream';
+                }
 
                 StageAttachment::create([
                     'service_request_id' => $serviceRequest->id,
