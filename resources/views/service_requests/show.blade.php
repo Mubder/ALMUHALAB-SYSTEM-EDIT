@@ -1478,7 +1478,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const progressBar = document.getElementById('stage-upload-progress-bar');
         const detailsText = document.getElementById('stage-upload-details-text');
 
-        const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks
+        const CHUNK_SIZE = 10 * 1024 * 1024; // 10MB chunks
         let filesArray = Array.from(files);
         let currentFileIndex = 0;
         let mergedFilesResult = [];
@@ -1518,7 +1518,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             statusText.innerText = `Uploading file ${currentFileIndex + 1} of ${filesArray.length}...`;
 
-            function uploadNextChunk() {
+            function uploadNextChunk(retryCount = 0) {
                 if (currentChunk > totalChunks) {
                     currentFileIndex++;
                     uploadNextFile();
@@ -1540,7 +1540,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const percentComplete = Math.round((start / fileSize) * 100);
                 progressBar.style.width = `${percentComplete}%`;
-                detailsText.innerText = `File: "${file.name}" | Chunk ${currentChunk} of ${totalChunks} (${percentComplete}%)`;
+                
+                if (retryCount > 0) {
+                    detailsText.innerHTML = `<span class="text-warning fw-bold"><i class="bi bi-arrow-repeat me-1"></i>Server busy. Retrying chunk ${currentChunk} of ${totalChunks} (Attempt ${retryCount}/5)...</span>`;
+                } else {
+                    detailsText.innerText = `File: "${file.name}" | Chunk ${currentChunk} of ${totalChunks} (${percentComplete}%)`;
+                }
 
                 fetch("{{ route('chunk-upload') }}", {
                     method: 'POST',
@@ -1564,23 +1569,31 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     }
                     currentChunk++;
-                    uploadNextChunk();
+                    setTimeout(() => {
+                        uploadNextChunk(0);
+                    }, 150);
                 })
                 .catch(err => {
-                    console.error("Upload error:", err);
-                    statusText.innerText = "Upload failed!";
-                    progressBar.className = "progress-bar bg-danger";
-                    detailsText.innerHTML = `<span class="text-danger fw-bold">Error: ${err.message}. Please reload the page and try again.</span>`;
-                    
-                    stageForm.querySelectorAll('[data-bs-dismiss="modal"], .btn-close, .btn-outline-secondary').forEach(btn => {
-                        btn.style.pointerEvents = 'auto';
-                        btn.style.opacity = '1';
-                    });
-                    submitBtn.disabled = false;
+                    console.warn(`Chunk ${currentChunk} failed (attempt ${retryCount + 1}):`, err);
+                    if (retryCount < 5) {
+                        setTimeout(() => {
+                            uploadNextChunk(retryCount + 1);
+                        }, 1500);
+                    } else {
+                        statusText.innerText = "Upload failed!";
+                        progressBar.className = "progress-bar bg-danger";
+                        detailsText.innerHTML = `<span class="text-danger fw-bold">Error: ${err.message}. Please reload the page and try again.</span>`;
+                        
+                        stageForm.querySelectorAll('[data-bs-dismiss="modal"], .btn-close, .btn-outline-secondary').forEach(btn => {
+                            btn.style.pointerEvents = 'auto';
+                            btn.style.opacity = '1';
+                        });
+                        submitBtn.disabled = false;
+                    }
                 });
             }
 
-            uploadNextChunk();
+            uploadNextChunk(0);
         }
 
         uploadNextFile();

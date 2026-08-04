@@ -14,6 +14,9 @@ class ChunkUploadController extends Controller
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
+        // Close session lock immediately so parallel/rapid requests don't lock each other out
+        session_write_close();
+
         $request->validate([
             'file' => 'required|file',
             'resumableIdentifier' => 'required|string',
@@ -30,7 +33,6 @@ class ChunkUploadController extends Controller
 
         // Sanitize inputs
         $identifier = preg_replace('/[^a-zA-Z0-9_\-]/', '', $identifier);
-        // Replace spaces and special chars in filename with underscores for safety
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
         $basename = pathinfo($filename, PATHINFO_FILENAME);
         $safeBasename = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $basename);
@@ -41,13 +43,9 @@ class ChunkUploadController extends Controller
         // Store the chunk file
         $file->storeAs($tempPath, "chunk_{$chunkNumber}", 'local');
 
-        // Check if all chunks are uploaded
-        $chunksUploaded = 0;
-        for ($i = 1; $i <= $totalChunks; $i++) {
-            if (Storage::disk('local')->exists("{$tempPath}/chunk_{$i}")) {
-                $chunksUploaded++;
-            }
-        }
+        // Fast chunk count check using single glob scan
+        $chunkDir = storage_path("app/{$tempPath}");
+        $chunksUploaded = is_dir($chunkDir) ? count(glob("{$chunkDir}/chunk_*")) : 0;
 
         if ($chunksUploaded === $totalChunks) {
             // All chunks are present, let's merge them!
