@@ -373,7 +373,7 @@ $fvNotes = (($fieldVisMap['additional_notes']['visibility'] ?? 'all') === 'admin
                 <button type="button" class="btn btn-outline-secondary btn-sm" onclick="addFileRow()">
                     <i class="bi bi-plus me-1"></i>{{ __('Add Another File') }}
                 </button>
-                <div class="form-text mt-1"><i class="bi bi-info-circle me-1"></i>{{ __('Max 20 MB per file.') }}</div>
+                <div class="form-text mt-1"><i class="bi bi-info-circle me-1"></i>{{ __('Max 1 GB per file.') }}</div>
                 @error('attachments')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                 @error('attachments.*')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
             </div>

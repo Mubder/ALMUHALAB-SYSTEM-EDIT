@@ -1091,6 +1091,46 @@
                 : 'none';
         };
         window.addEventListener('scroll', onScroll, { passive: true });
+
+        /* ── File Upload Loading States ── */
+        document.querySelectorAll('form[enctype="multipart/form-data"]').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    setTimeout(() => {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Uploading...`;
+                    }, 50);
+
+                    const modal = form.closest('.modal');
+                    if (modal) {
+                        modal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close, .btn-outline-secondary').forEach(btn => {
+                            btn.style.pointerEvents = 'none';
+                            btn.style.opacity = '0.5';
+                        });
+                    }
+
+                    let container = form.querySelector('.modal-body') || form;
+                    if (!form.querySelector('#upload-progress-alert')) {
+                        const alertDiv = document.createElement('div');
+                        alertDiv.id = 'upload-progress-alert';
+                        alertDiv.className = 'alert d-flex align-items-center mt-3 border-0 shadow-sm text-start';
+                        alertDiv.style.background = '#f0f9ff';
+                        alertDiv.style.color = '#0369a1';
+                        alertDiv.style.borderRadius = '12px';
+                        alertDiv.style.border = '1px solid #bae6fd';
+                        alertDiv.innerHTML = `
+                            <div class="spinner-grow spinner-grow-sm text-primary me-3 flex-shrink-0" role="status" style="animation-duration: 1.2s;"></div>
+                            <div style="font-size: .82rem;">
+                                <strong class="d-block mb-1" style="color: #0369a1;">Uploading your files...</strong>
+                                Please keep this page open. Large files may take a few minutes to transfer depending on your internet connection.
+                            </div>
+                        `;
+                        container.appendChild(alertDiv);
+                    }
+                }
+            });
+        });
     })();
     </script>
 

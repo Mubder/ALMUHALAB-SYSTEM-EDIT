@@ -409,7 +409,7 @@
                                     <label class="form-label fw-600">{{ __('Payment Receipt') }} <span class="text-danger">*</span></label>
                                     <input type="file" name="receipt" class="form-control @error('receipt') is-invalid @enderror"
                                            accept=".jpg,.jpeg,.png,.pdf" required>
-                                    <div class="form-text"><i class="bi bi-info-circle me-1"></i>{{ __('JPG, PNG or PDF — max 20 MB.') }}</div>
+                                    <div class="form-text"><i class="bi bi-info-circle me-1"></i>{{ __('JPG, PNG or PDF — max 1 GB.') }}</div>
                                     @error('receipt')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="p-2 rounded-2 small" style="background:#fffbeb;border:1px solid #fde68a;color:#92400e">
@@ -705,7 +705,7 @@
                                         <label class="form-label">{{ __('Files') }} <span class="text-danger">*</span></label>
                                         <input type="file" name="files[]" class="form-control" multiple required
                                                accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.zip,.txt">
-                                        <div class="form-text">{{ __('PDF, images, Word, Excel, ZIP — max 20 MB each.') }}</div>
+                                        <div class="form-text">{{ __('PDF, images, Word, Excel, ZIP — max 1 GB each.') }}</div>
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label">{{ __('Stage') }}</label>
