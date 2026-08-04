@@ -43,17 +43,22 @@ class ChunkUploadController extends Controller
         // Store the chunk file
         $file->storeAs($tempPath, "chunk_{$chunkNumber}", 'local');
 
-        // Fast chunk count check using single glob scan
-        $chunkDir = storage_path("app/{$tempPath}");
-        $chunksUploaded = is_dir($chunkDir) ? count(glob("{$chunkDir}/chunk_*")) : 0;
+        // Check if all chunks from 1 to totalChunks exist
+        $allExist = true;
+        for ($i = 1; $i <= $totalChunks; $i++) {
+            if (!file_exists(storage_path("app/{$tempPath}/chunk_{$i}"))) {
+                $allExist = false;
+                break;
+            }
+        }
 
-        if ($chunksUploaded === $totalChunks) {
-            // All chunks are present, let's merge them!
+        if ($allExist) {
+            @set_time_limit(300);
+
             $finalFilename = "merged_" . time() . "_" . $safeFilename;
             $finalPath = "stage-attachments/{$finalFilename}";
             $finalFullPath = storage_path("app/public/{$finalPath}");
 
-            // Ensure destination directory exists
             $dir = dirname($finalFullPath);
             if (!is_dir($dir)) {
                 mkdir($dir, 0755, true);
@@ -65,21 +70,18 @@ class ChunkUploadController extends Controller
                     $chunkFile = storage_path("app/{$tempPath}/chunk_{$i}");
                     $in = fopen($chunkFile, "rb");
                     if ($in) {
-                        while ($buff = fread($in, 4096)) {
-                            fwrite($out, $buff);
-                        }
+                        stream_copy_to_stream($in, $out);
                         fclose($in);
                     }
                     if (file_exists($chunkFile)) {
-                        unlink($chunkFile); // Clean up chunk
+                        @unlink($chunkFile);
                     }
                 }
                 fclose($out);
                 
-                // Clean up directory
                 $chunkDir = storage_path("app/{$tempPath}");
                 if (is_dir($chunkDir)) {
-                    rmdir($chunkDir);
+                    @rmdir($chunkDir);
                 }
             }
 

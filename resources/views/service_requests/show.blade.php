@@ -1538,7 +1538,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const csrfToken = stageForm.querySelector('input[name="_token"]').value;
 
-                const percentComplete = Math.round((start / fileSize) * 100);
+                const percentComplete = Math.round((end / fileSize) * 100);
                 progressBar.style.width = `${percentComplete}%`;
                 
                 if (retryCount > 0) {
