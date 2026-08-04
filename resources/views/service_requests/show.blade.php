@@ -1497,24 +1497,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 progressBar.className = "progress-bar bg-success";
                 detailsText.innerText = "All files successfully uploaded. Saving records...";
 
-                mergedFilesResult.forEach((res, idx) => {
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = `merged_files[${idx}]`;
-                    hiddenInput.className = 'merged-file-input';
-                    hiddenInput.value = JSON.stringify({
-                        path: res.path,
-                        filename: res.filename
-                    });
-                    stageForm.appendChild(hiddenInput);
-                });
+                const stageSelect = stageForm.querySelector('select[name="stage"]');
+                const visibilityInput = stageForm.querySelector('input[name="visibility"]');
+                const csrfToken = stageForm.querySelector('input[name="_token"]').value;
 
-                fileInput.removeAttribute('name');
-                fileInput.value = "";
-                
-                setTimeout(() => {
-                    stageForm.submit();
-                }, 500);
+                const payload = {
+                    _token: csrfToken,
+                    merged_files: mergedFilesResult,
+                    stage: stageSelect ? stageSelect.value : 1,
+                    visibility: visibilityInput ? visibilityInput.value : 'employee'
+                };
+
+                fetch(stageForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(res => {
+                    if (!res.ok) {
+                        return res.json().then(errData => {
+                            throw new Error(errData.message || errData.error || `HTTP ${res.status}`);
+                        });
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    statusText.innerText = "Success!";
+                    detailsText.innerText = data.message || "File saved successfully. Reloading...";
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 600);
+                })
+                .catch(err => {
+                    console.error("Save error:", err);
+                    statusText.innerText = "Save failed!";
+                    progressBar.className = "progress-bar bg-danger";
+                    detailsText.innerHTML = `<span class="text-danger fw-bold">Error: ${err.message}. Please try again.</span>`;
+                    submitBtn.disabled = false;
+                    stageForm.querySelectorAll('[data-bs-dismiss="modal"], .btn-close, .btn-outline-secondary').forEach(btn => {
+                        btn.style.pointerEvents = 'auto';
+                        btn.style.opacity = '1';
+                    });
+                });
                 return;
             }
 

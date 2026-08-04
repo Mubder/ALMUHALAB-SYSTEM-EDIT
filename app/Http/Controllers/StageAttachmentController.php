@@ -111,6 +111,13 @@ class StageAttachmentController extends Controller
             }
         }
 
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $uploadedCount . ' file(s) uploaded successfully.',
+            ]);
+        }
+
         return back()->with('success', $uploadedCount . ' file(s) uploaded successfully.');
     }
 
