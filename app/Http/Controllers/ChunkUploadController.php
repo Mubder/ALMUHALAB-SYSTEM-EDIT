@@ -43,10 +43,10 @@ class ChunkUploadController extends Controller
         // Store the chunk file
         $file->storeAs($tempPath, "chunk_{$chunkNumber}", 'local');
 
-        // Check if all chunks from 1 to totalChunks exist
+        // Check if all chunks from 1 to totalChunks exist on local disk
         $allExist = true;
         for ($i = 1; $i <= $totalChunks; $i++) {
-            if (!file_exists(storage_path("app/{$tempPath}/chunk_{$i}"))) {
+            if (!Storage::disk('local')->exists("{$tempPath}/chunk_{$i}")) {
                 $allExist = false;
                 break;
             }
@@ -57,32 +57,31 @@ class ChunkUploadController extends Controller
 
             $finalFilename = "merged_" . time() . "_" . $safeFilename;
             $finalPath = "stage-attachments/{$finalFilename}";
-            $finalFullPath = storage_path("app/public/{$finalPath}");
+            $fullPublicPath = storage_path("app/public/{$finalPath}");
 
-            $dir = dirname($finalFullPath);
+            $dir = dirname($fullPublicPath);
             if (!is_dir($dir)) {
                 mkdir($dir, 0755, true);
             }
 
-            $out = fopen($finalFullPath, "wb");
-            if ($out) {
+            $outStream = fopen($fullPublicPath, "wb");
+            if ($outStream) {
                 for ($i = 1; $i <= $totalChunks; $i++) {
-                    $chunkFile = storage_path("app/{$tempPath}/chunk_{$i}");
-                    $in = fopen($chunkFile, "rb");
-                    if ($in) {
-                        stream_copy_to_stream($in, $out);
-                        fclose($in);
-                    }
-                    if (file_exists($chunkFile)) {
-                        @unlink($chunkFile);
+                    $chunkRelPath = "{$tempPath}/chunk_{$i}";
+                    $chunkFullPath = Storage::disk('local')->path($chunkRelPath);
+                    
+                    if (file_exists($chunkFullPath)) {
+                        $inStream = fopen($chunkFullPath, "rb");
+                        if ($inStream) {
+                            stream_copy_to_stream($inStream, $outStream);
+                            fclose($inStream);
+                        }
                     }
                 }
-                fclose($out);
-                
-                $chunkDir = storage_path("app/{$tempPath}");
-                if (is_dir($chunkDir)) {
-                    @rmdir($chunkDir);
-                }
+                fclose($outStream);
+
+                // Clean up local temp chunk files
+                Storage::disk('local')->deleteDirectory($tempPath);
             }
 
             return response()->json([

@@ -1483,8 +1483,15 @@ document.addEventListener('DOMContentLoaded', function() {
         let currentFileIndex = 0;
         let mergedFilesResult = [];
 
-        function uploadNextFile() {
             if (currentFileIndex >= filesArray.length) {
+                if (mergedFilesResult.length === 0) {
+                    statusText.innerText = "Upload failed!";
+                    progressBar.className = "progress-bar bg-danger";
+                    detailsText.innerHTML = `<span class="text-danger fw-bold">Error: No files were assembled on the server. Please try again.</span>`;
+                    submitBtn.disabled = false;
+                    return;
+                }
+
                 statusText.innerText = "Finalizing upload...";
                 progressBar.style.width = "100%";
                 progressBar.className = "progress-bar bg-success";
@@ -1502,6 +1509,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     stageForm.appendChild(hiddenInput);
                 });
 
+                fileInput.removeAttribute('name');
                 fileInput.value = "";
                 
                 setTimeout(() => {

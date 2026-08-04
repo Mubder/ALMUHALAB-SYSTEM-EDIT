@@ -15,9 +15,9 @@ class StageAttachmentController extends Controller
         abort_unless(auth()->user()->hasPermission('manage_attachments'), 403);
 
         $request->validate([
-            'files'        => 'required_without:merged_files|array',
-            'files.*'      => 'file|max:1048576',
-            'merged_files' => 'required_without:files|array',
+            'files'        => 'nullable|array',
+            'files.*'      => 'nullable|file|max:1048576',
+            'merged_files' => 'nullable|array',
             'stage'        => 'required|integer|between:1,7',
             'visibility'   => 'nullable|in:admin,employee,client',
         ]);
@@ -28,6 +28,8 @@ class StageAttachmentController extends Controller
         // 1. Process regular files
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
+                if (!$file || !$file->isValid()) continue;
+
                 $path = $file->store("stage-attachments/{$serviceRequest->id}", 'public');
 
                 StageAttachment::create([
@@ -59,7 +61,6 @@ class StageAttachmentController extends Controller
         // 2. Process pre-merged chunked files
         if ($request->has('merged_files')) {
             foreach ($request->input('merged_files') as $fileData) {
-                // If it's a JSON string, decode it
                 if (is_string($fileData)) {
                     $fileData = json_decode($fileData, true);
                 }
@@ -69,13 +70,11 @@ class StageAttachmentController extends Controller
                 
                 if (empty($path)) continue;
 
-                // Move file to the correct service request directory if needed (or keep in main directory)
-                $oldPath = "public/{$path}";
-                $newPath = "public/stage-attachments/{$serviceRequest->id}/" . basename($path);
-                
-                if (Storage::exists($oldPath)) {
-                    Storage::move($oldPath, $newPath);
-                    $path = "stage-attachments/{$serviceRequest->id}/" . basename($path);
+                // Move file to the service request directory using public disk
+                $targetPath = "stage-attachments/{$serviceRequest->id}/" . basename($path);
+                if (Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->move($path, $targetPath);
+                    $path = $targetPath;
                 }
 
                 $fullPath = storage_path("app/public/{$path}");
