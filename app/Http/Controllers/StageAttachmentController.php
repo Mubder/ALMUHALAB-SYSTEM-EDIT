@@ -16,7 +16,7 @@ class StageAttachmentController extends Controller
 
         $request->validate([
             'files'      => 'required|array|min:1',
-            'files.*'    => 'required|file|max:20480',
+            'files.*'    => 'required|file|max:1048576',
             'stage'      => 'required|integer|between:1,7',
             'visibility' => 'nullable|in:admin,employee,client',
         ]);

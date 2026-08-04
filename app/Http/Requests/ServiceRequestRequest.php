@@ -45,7 +45,7 @@ class ServiceRequestRequest extends FormRequest
             // Notes & attachments
             'additional_notes'    => 'nullable|string|max:2000',
             'attachments'         => 'nullable|array',
-            'attachments.*'       => 'file|max:20480',
+            'attachments.*'       => 'file|max:1048576',
         ];
     }
 
@@ -53,7 +53,7 @@ class ServiceRequestRequest extends FormRequest
     {
         return [
             'travel_date_end.after_or_equal' => 'End date must be on or after the start date.',
-            'attachments.*.max'              => 'Each file must not exceed 20 MB.',
+            'attachments.*.max'              => 'Each file must not exceed 1 GB.',
         ];
     }
 
