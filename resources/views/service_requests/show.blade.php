@@ -697,13 +697,13 @@
                             <h6 class="modal-title fw-bold"><i class="bi bi-upload text-primary me-2"></i>{{ __('Upload Attachments') }}</h6>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <form action="{{ route('stage-attachments.store', $serviceRequest) }}" method="POST" enctype="multipart/form-data">
+                        <form id="stage-attachments-form" action="{{ route('stage-attachments.store', $serviceRequest) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="modal-body">
                                 <div class="row g-3">
                                     <div class="col-12">
                                         <label class="form-label">{{ __('Files') }} <span class="text-danger">*</span></label>
-                                        <input type="file" name="files[]" class="form-control" multiple required
+                                        <input type="file" id="stage-files-input" name="files[]" class="form-control" multiple required
                                                accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.zip,.txt">
                                         <div class="form-text">{{ __('PDF, images, Word, Excel, ZIP — max 1 GB each.') }}</div>
                                     </div>
@@ -723,7 +723,7 @@
                             </div>
                             <div class="modal-footer border-0">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" id="stage-submit-btn" class="btn btn-primary">
                                     <i class="bi bi-upload me-1"></i>{{ __('Upload') }}
                                 </button>
                             </div>
@@ -1425,5 +1425,166 @@ function toggleReply(id) {
     radios.forEach(r => r.addEventListener('change', update));
     update();
 })();
+
+// ── Chunked Upload Handler ──
+document.addEventListener('DOMContentLoaded', function() {
+    const stageForm = document.getElementById('stage-attachments-form');
+    if (!stageForm) return;
+
+    stageForm.addEventListener('submit', function(e) {
+        const fileInput = document.getElementById('stage-files-input');
+        const submitBtn = document.getElementById('stage-submit-btn');
+        
+        if (stageForm.querySelector('.merged-file-input')) {
+            return;
+        }
+
+        const files = fileInput.files;
+        if (!files || files.length === 0) return;
+
+        e.preventDefault();
+
+        submitBtn.disabled = true;
+        stageForm.querySelectorAll('[data-bs-dismiss="modal"], .btn-close, .btn-outline-secondary').forEach(btn => {
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.5';
+        });
+
+        fileInput.style.display = 'none';
+        
+        let progressContainer = document.getElementById('stage-upload-progress-wrapper');
+        if (!progressContainer) {
+            progressContainer = document.createElement('div');
+            progressContainer.id = 'stage-upload-progress-wrapper';
+            progressContainer.className = 'mt-3 p-3 rounded-3 shadow-sm text-start';
+            progressContainer.style.background = '#f0f9ff';
+            progressContainer.style.border = '1px solid #bae6fd';
+            progressContainer.innerHTML = `
+                <div class="d-flex align-items-center mb-2">
+                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                    <span class="fw-bold text-primary small" id="stage-upload-status-text">Uploading files...</span>
+                </div>
+                <div class="progress mb-2" style="height: 10px; border-radius: 5px;">
+                    <div id="stage-upload-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%; border-radius: 5px;"></div>
+                </div>
+                <div class="text-muted small" style="font-size: 0.78rem;" id="stage-upload-details-text">
+                    Starting upload...
+                </div>
+            `;
+            fileInput.parentNode.appendChild(progressContainer);
+        }
+
+        const statusText = document.getElementById('stage-upload-status-text');
+        const progressBar = document.getElementById('stage-upload-progress-bar');
+        const detailsText = document.getElementById('stage-upload-details-text');
+
+        const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks
+        let filesArray = Array.from(files);
+        let currentFileIndex = 0;
+        let mergedFilesResult = [];
+
+        function uploadNextFile() {
+            if (currentFileIndex >= filesArray.length) {
+                statusText.innerText = "Finalizing upload...";
+                progressBar.style.width = "100%";
+                progressBar.className = "progress-bar bg-success";
+                detailsText.innerText = "All files successfully uploaded. Saving records...";
+
+                mergedFilesResult.forEach((res, idx) => {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = `merged_files[${idx}]`;
+                    hiddenInput.className = 'merged-file-input';
+                    hiddenInput.value = JSON.stringify({
+                        path: res.path,
+                        filename: res.filename
+                    });
+                    stageForm.appendChild(hiddenInput);
+                });
+
+                fileInput.value = "";
+                
+                setTimeout(() => {
+                    stageForm.submit();
+                }, 500);
+                return;
+            }
+
+            const file = filesArray[currentFileIndex];
+            const fileSize = file.size;
+            const totalChunks = Math.ceil(fileSize / CHUNK_SIZE);
+            const fileIdentifier = Date.now() + '_' + Math.random().toString(36).substring(2, 11);
+            let currentChunk = 1;
+
+            statusText.innerText = `Uploading file ${currentFileIndex + 1} of ${filesArray.length}...`;
+
+            function uploadNextChunk() {
+                if (currentChunk > totalChunks) {
+                    currentFileIndex++;
+                    uploadNextFile();
+                    return;
+                }
+
+                const start = (currentChunk - 1) * CHUNK_SIZE;
+                const end = Math.min(start + CHUNK_SIZE, fileSize);
+                const chunkBlob = file.slice(start, end);
+
+                const formData = new FormData();
+                formData.append('file', chunkBlob, file.name);
+                formData.append('resumableIdentifier', fileIdentifier);
+                formData.append('resumableChunkNumber', currentChunk);
+                formData.append('resumableTotalChunks', totalChunks);
+                formData.append('resumableFilename', file.name);
+
+                const csrfToken = stageForm.querySelector('input[name="_token"]').value;
+
+                const percentComplete = Math.round((start / fileSize) * 100);
+                progressBar.style.width = `${percentComplete}%`;
+                detailsText.innerText = `File: "${file.name}" | Chunk ${currentChunk} of ${totalChunks} (${percentComplete}%)`;
+
+                fetch("{{ route('chunk-upload') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned HTTP ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.completed) {
+                        mergedFilesResult.push({
+                            path: data.path,
+                            filename: data.filename
+                        });
+                    }
+                    currentChunk++;
+                    uploadNextChunk();
+                })
+                .catch(err => {
+                    console.error("Upload error:", err);
+                    statusText.innerText = "Upload failed!";
+                    progressBar.className = "progress-bar bg-danger";
+                    detailsText.innerHTML = `<span class="text-danger fw-bold">Error: ${err.message}. Please reload the page and try again.</span>`;
+                    
+                    stageForm.querySelectorAll('[data-bs-dismiss="modal"], .btn-close, .btn-outline-secondary').forEach(btn => {
+                        btn.style.pointerEvents = 'auto';
+                        btn.style.opacity = '1';
+                    });
+                    submitBtn.disabled = false;
+                });
+            }
+
+            uploadNextChunk();
+        }
+
+        uploadNextFile();
+    });
+});
 </script>
 @endsection

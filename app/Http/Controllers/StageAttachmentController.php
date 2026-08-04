@@ -15,42 +15,100 @@ class StageAttachmentController extends Controller
         abort_unless(auth()->user()->hasPermission('manage_attachments'), 403);
 
         $request->validate([
-            'files'      => 'required|array|min:1',
-            'files.*'    => 'required|file|max:1048576',
-            'stage'      => 'required|integer|between:1,7',
-            'visibility' => 'nullable|in:admin,employee,client',
+            'files'        => 'required_without:merged_files|array',
+            'files.*'      => 'file|max:1048576',
+            'merged_files' => 'required_without:files|array',
+            'stage'        => 'required|integer|between:1,7',
+            'visibility'   => 'nullable|in:admin,employee,client',
         ]);
 
         $visibility = $request->input('visibility', 'employee');
+        $uploadedCount = 0;
 
-        foreach ($request->file('files') as $file) {
-            $path = $file->store("stage-attachments/{$serviceRequest->id}", 'public');
+        // 1. Process regular files
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $path = $file->store("stage-attachments/{$serviceRequest->id}", 'public');
 
-            $attachment = StageAttachment::create([
-                'service_request_id' => $serviceRequest->id,
-                'stage'              => $request->stage,
-                'uploaded_by'        => auth()->id(),
-                'file_path'          => $path,
-                'original_name'      => $file->getClientOriginalName(),
-                'mime_type'          => $file->getMimeType(),
-                'size'               => $file->getSize(),
-                'visibility'         => $visibility,
-            ]);
+                StageAttachment::create([
+                    'service_request_id' => $serviceRequest->id,
+                    'stage'              => $request->stage,
+                    'uploaded_by'        => auth()->id(),
+                    'file_path'          => $path,
+                    'original_name'      => $file->getClientOriginalName(),
+                    'mime_type'          => $file->getMimeType(),
+                    'size'               => $file->getSize(),
+                    'visibility'         => $visibility,
+                ]);
 
-            ActivityLog::create([
-                'user'         => auth()->id(),
-                'action'       => 'attachment_uploaded',
-                'subject_type' => ServiceRequest::class,
-                'subject_id'   => $serviceRequest->id,
-                'changes'      => [
-                    'file'       => $file->getClientOriginalName(),
-                    'stage'      => $request->stage,
-                    'visibility' => $visibility,
-                ],
-            ]);
+                ActivityLog::create([
+                    'user'         => auth()->id(),
+                    'action'       => 'attachment_uploaded',
+                    'subject_type' => ServiceRequest::class,
+                    'subject_id'   => $serviceRequest->id,
+                    'changes'      => [
+                        'file'       => $file->getClientOriginalName(),
+                        'stage'      => $request->stage,
+                        'visibility' => $visibility,
+                    ],
+                ]);
+                $uploadedCount++;
+            }
         }
 
-        return back()->with('success', count($request->file('files')) . ' file(s) uploaded.');
+        // 2. Process pre-merged chunked files
+        if ($request->has('merged_files')) {
+            foreach ($request->input('merged_files') as $fileData) {
+                // If it's a JSON string, decode it
+                if (is_string($fileData)) {
+                    $fileData = json_decode($fileData, true);
+                }
+                
+                $path = $fileData['path'] ?? '';
+                $filename = $fileData['filename'] ?? '';
+                
+                if (empty($path)) continue;
+
+                // Move file to the correct service request directory if needed (or keep in main directory)
+                $oldPath = "public/{$path}";
+                $newPath = "public/stage-attachments/{$serviceRequest->id}/" . basename($path);
+                
+                if (Storage::exists($oldPath)) {
+                    Storage::move($oldPath, $newPath);
+                    $path = "stage-attachments/{$serviceRequest->id}/" . basename($path);
+                }
+
+                $fullPath = storage_path("app/public/{$path}");
+                $size = file_exists($fullPath) ? filesize($fullPath) : 0;
+                $mimeType = file_exists($fullPath) ? mime_content_type($fullPath) : 'application/octet-stream';
+
+                StageAttachment::create([
+                    'service_request_id' => $serviceRequest->id,
+                    'stage'              => $request->stage,
+                    'uploaded_by'        => auth()->id(),
+                    'file_path'          => $path,
+                    'original_name'      => $filename,
+                    'mime_type'          => $mimeType,
+                    'size'               => $size,
+                    'visibility'         => $visibility,
+                ]);
+
+                ActivityLog::create([
+                    'user'         => auth()->id(),
+                    'action'       => 'attachment_uploaded',
+                    'subject_type' => ServiceRequest::class,
+                    'subject_id'   => $serviceRequest->id,
+                    'changes'      => [
+                        'file'       => $filename,
+                        'stage'      => $request->stage,
+                        'visibility' => $visibility,
+                    ],
+                ]);
+                $uploadedCount++;
+            }
+        }
+
+        return back()->with('success', $uploadedCount . ' file(s) uploaded successfully.');
     }
 
     public function destroy(ServiceRequest $serviceRequest, StageAttachment $attachment)

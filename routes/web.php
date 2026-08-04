@@ -179,6 +179,8 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{attachment}',[StageAttachmentController::class, 'destroy'])->name('destroy');
         });
 
+    Route::post('chunk-upload', [App\Http\Controllers\ChunkUploadController::class, 'upload'])->name('chunk-upload');
+
     // ── Follow-Ups ────────────────────────────────────────
     Route::middleware('permission:manage_followups')
         ->prefix('service-requests/{service_request}/follow-ups')
