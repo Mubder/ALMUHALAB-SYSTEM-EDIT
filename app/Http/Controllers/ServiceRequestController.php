@@ -437,14 +437,19 @@ class ServiceRequestController extends Controller
         }
     }
 
-    // Ensure non-admin users can only access their own requests
+    // Ensure staff/agents with view/edit/transition permissions can access requests
     private function authorizeAccess(ServiceRequest $serviceRequest): void
     {
         $user = auth()->user();
-        // Staff with edit_request can access any request
-        if ($user->hasPermission('edit_request')) {
+        
+        // Staff/agents with view, edit, or transition permissions (or assigned user)
+        if ($user->hasPermission('view_request') || 
+            $user->hasPermission('edit_request') || 
+            $user->hasPermission('transition_stage') ||
+            $serviceRequest->assigned_to === $user->id) {
             return;
         }
+
         // Clients can only access their own requests
         if ($serviceRequest->user_id !== $user->id) {
             abort(403, 'You do not have access to this request.');
