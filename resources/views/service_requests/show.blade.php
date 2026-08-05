@@ -357,8 +357,8 @@
             </div>
             @endif
 
-            {{-- Client Actions (stage 4: Client Approval) --}}
-            @if($isClient && $currentStage === 4 && !$serviceRequest->is_rejected)
+            {{-- Client Actions (stage 5: Client Approval) --}}
+            @if($isClient && $currentStage === 5 && !$serviceRequest->is_rejected)
             <div class="page-card mb-4 border border-warning border-2">
                 <h6 class="fw-bold mb-2 text-warning"><i class="bi bi-person-check me-1"></i>{{ __('Your Action Required') }}</h6>
 

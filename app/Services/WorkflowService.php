@@ -42,6 +42,15 @@ class WorkflowService
             'client_actionable' => false,
         ],
         4 => [
+            'key'     => 'translation_overseas',
+            'label'   => 'Translation & Overseas Review',
+            'icon'    => 'bi-translate',
+            'color'   => 'info',
+            'statuses'=> ['Pending', 'In Translation', 'Sent to Agent', 'Agent Responded', 'Returned'],
+            'default' => 'Pending',
+            'client_actionable' => false,
+        ],
+        5 => [
             'key'     => 'client_approval',
             'label'   => 'Client Approval',
             'icon'    => 'bi-person-check',
@@ -50,7 +59,7 @@ class WorkflowService
             'default' => 'Awaiting Payment',
             'client_actionable' => true, // client can set Paid or Rejected
         ],
-        5 => [
+        6 => [
             'key'     => 'execution',
             'label'   => 'Execution',
             'icon'    => 'bi-play-circle',
@@ -59,7 +68,7 @@ class WorkflowService
             'default' => 'Pending',
             'client_actionable' => false,
         ],
-        6 => [
+        7 => [
             'key'     => 'monitoring',
             'label'   => 'Monitoring',
             'icon'    => 'bi-activity',
@@ -68,7 +77,7 @@ class WorkflowService
             'default' => 'In Progress',
             'client_actionable' => false,
         ],
-        7 => [
+        8 => [
             'key'     => 'closure',
             'label'   => 'Closure',
             'icon'    => 'bi-check-circle',

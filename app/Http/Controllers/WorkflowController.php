@@ -75,8 +75,8 @@ class WorkflowController extends Controller
     {
         $user = auth()->user();
 
-        // Only the request owner at stage 4 can confirm payment
-        if ($serviceRequest->user_id !== $user->id || $serviceRequest->current_stage !== 4) {
+        // Only the request owner at stage 5 (Client Approval) can confirm payment
+        if ($serviceRequest->user_id !== $user->id || $serviceRequest->current_stage !== 5) {
             abort(403, 'You cannot perform this action.');
         }
         if ($serviceRequest->is_rejected) {
@@ -96,7 +96,7 @@ class WorkflowController extends Controller
 
         StageAttachment::create([
             'service_request_id' => $serviceRequest->id,
-            'stage'              => 4,
+            'stage'              => 5,
             'uploaded_by'        => $user->id,
             'file_path'          => $path,
             'original_name'      => $file->getClientOriginalName(),
@@ -118,7 +118,7 @@ class WorkflowController extends Controller
             abort(403);
         }
 
-        if ($serviceRequest->current_stage !== 4 || $serviceRequest->stage_status !== 'Awaiting Payment') {
+        if ($serviceRequest->current_stage !== 5 || $serviceRequest->stage_status !== 'Awaiting Payment') {
             return back()->with('error', 'Payment cannot be approved at this stage.');
         }
 
