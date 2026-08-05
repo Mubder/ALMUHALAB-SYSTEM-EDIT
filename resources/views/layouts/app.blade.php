@@ -10,9 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     @if(app()->isLocale('ar'))
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     @else
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @endif
 
     {{-- Bootstrap CSS + Icons: always from CDN (Bootstrap JS loaded in footer) --}}
@@ -25,44 +25,46 @@
 
     <style>
         /* ─────────────────────────────────────────────────
-           DESIGN TOKENS
+           KCA CLONED UNIFIED DESIGN TOKENS
         ───────────────────────────────────────────────── */
         :root {
-            --font-base: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-base: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
 
-            --color-bg:          #f0f2f5;
+            --color-bg:          #FAF8F5; /* KCA Cream Warm */
             --color-surface:     #ffffff;
-            --color-border:      #e5e7eb;
-            --color-border-light:#f3f4f6;
+            --color-border:      #E2E8F0;
+            --color-border-light:#F1F5F9;
 
-            --color-primary:     #2563eb;
-            --color-primary-soft:#eff6ff;
+            --color-primary:     #0F172A; /* KCA Deep Navy */
+            --color-primary-soft:#FEF3C7; /* KCA Gold Soft */
+            --color-gold:        #D97706; /* KCA Gold Accent */
+            --color-gold-dark:   #B45309;
             --color-success:     #16a34a;
             --color-success-soft:#f0fdf4;
             --color-danger:      #dc2626;
             --color-danger-soft: #fef2f2;
             --color-warning:     #d97706;
             --color-warning-soft:#fffbeb;
-            --color-muted:       #6b7280;
-            --color-subtle:      #9ca3af;
+            --color-muted:       #64748B;
+            --color-subtle:      #94A3B8;
 
-            --nav-bg:            #0f172a;
-            --nav-border:        rgba(255,255,255,.06);
-            --nav-hover:         rgba(255,255,255,.08);
-            --nav-active:        rgba(255,255,255,.13);
+            --nav-bg:            #0F172A; /* KCA Deep Navy Navbar */
+            --nav-border:        rgba(217,119,6,.20); /* Gold Accent Border */
+            --nav-hover:         rgba(217,119,6,.12);
+            --nav-active:        rgba(217,119,6,.20);
 
-            --radius-sm:  6px;
-            --radius-md:  10px;
-            --radius-lg:  14px;
-            --radius-xl:  18px;
+            --radius-sm:  8px;
+            --radius-md:  12px;
+            --radius-lg:  16px;
+            --radius-xl:  20px;
             --radius-pill:999px;
 
-            --shadow-xs:  0 1px 2px rgba(0,0,0,.05);
-            --shadow-sm:  0 1px 6px rgba(0,0,0,.07);
-            --shadow-md:  0 4px 16px rgba(0,0,0,.08);
-            --shadow-lg:  0 8px 32px rgba(0,0,0,.10);
+            --shadow-xs:  0 1px 2px rgba(15,23,42,.04);
+            --shadow-sm:  0 2px 8px rgba(15,23,42,.06);
+            --shadow-md:  0 6px 20px rgba(15,23,42,.08);
+            --shadow-lg:  0 12px 36px rgba(15,23,42,.12);
 
-            --transition: .18s ease;
+            --transition: .22s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         /* ─────────────────────────────────────────────────
