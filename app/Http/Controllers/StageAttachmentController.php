@@ -111,6 +111,10 @@ class StageAttachmentController extends Controller
             }
         }
 
+        if ($uploadedCount > 0) {
+            \App\Services\WebhookService::dispatchServiceRequestEvent('attachment_uploaded', $serviceRequest);
+        }
+
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,

@@ -166,6 +166,7 @@ class WorkflowService
         });
 
         self::safeNotifyTransition($sr, $fromStage, $toStage, 'advanced', $actor);
+        \App\Services\WebhookService::dispatchServiceRequestEvent('stage_advanced', $sr->fresh());
     }
 
     public static function returnToPreviousStage(ServiceRequest $sr, User $actor, ?string $notes = null): void
@@ -192,6 +193,7 @@ class WorkflowService
         });
 
         self::safeNotifyTransition($sr, $fromStage, $toStage, 'returned', $actor);
+        \App\Services\WebhookService::dispatchServiceRequestEvent('stage_returned', $sr->fresh());
     }
 
     public static function forceTransition(ServiceRequest $sr, User $actor, int $toStage, ?string $notes = null): void
@@ -220,6 +222,8 @@ class WorkflowService
                 'from_stage' => $fromStage, 'to_stage' => $toStage, 'notes' => $notes,
             ]);
         });
+
+        \App\Services\WebhookService::dispatchServiceRequestEvent('stage_force_transitioned', $sr->fresh());
     }
 
     public static function updateStatus(ServiceRequest $sr, User $actor, string $newStatus, ?string $notes = null): void
@@ -248,6 +252,8 @@ class WorkflowService
                 'from_status' => $oldStatus, 'to_status' => $newStatus, 'notes' => $notes,
             ]);
         });
+
+        \App\Services\WebhookService::dispatchServiceRequestEvent('stage_status_changed', $sr->fresh());
 
         self::safeNotifyStatusChange($sr, $oldStatus, $newStatus, $actor);
     }
