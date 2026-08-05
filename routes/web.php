@@ -254,6 +254,12 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
+// ── KCA Bridge Endpoints ─────────────────────────────────────
+Route::prefix('api/kca')->group(function () {
+    Route::get('requests',   [\App\Http\Controllers\Api\KcaBridgeController::class, 'requests']);
+    Route::get('audit-logs', [\App\Http\Controllers\Api\KcaBridgeController::class, 'auditLogs']);
+});
+
 // Landing page — catch-all at the end to avoid conflicting with named routes
 Route::get('/', function () { return view('app-landing'); });
 Route::get('/{slug}', [App\Http\Controllers\LandingPageController::class, 'show'])->where('slug', '[a-z0-9-]+')->name('landing.page');
