@@ -24,7 +24,7 @@
     $fieldVisMap = $serviceRequest->fieldVisibilityMap();
     $allRoles    = \App\Models\Role::orderBy('name')->get();
     $stageAttachments     = ($canViewAttachments || $isClient)
-        ? $serviceRequest->stageAttachments()->with('uploader')->orderBy('stage')->orderBy('created_at', 'desc')->get()
+        ? $serviceRequest->stageAttachments()->with(['uploader.role'])->orderBy('stage')->orderBy('created_at', 'desc')->get()
             ->filter(fn($a) => $a->isVisibleTo($user, $serviceRequest))
         : collect();
 
@@ -636,53 +636,143 @@
                 @else
                     @php $grouped = $stageAttachments->groupBy('stage'); @endphp
                     @foreach($grouped as $stageNum => $files)
-                        @php $stageCfg = \App\Services\WorkflowService::stage($stageNum); @endphp
-                        <div class="mb-3">
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <span class="badge bg-{{ $stageCfg['color'] }}-subtle text-{{ $stageCfg['color'] }} border border-{{ $stageCfg['color'] }}-subtle" style="font-size:.68rem">
-                                    <i class="bi {{ $stageCfg['icon'] }} me-1"></i>{{ $stageCfg['label'] }}
+                        @php 
+                            $stageCfg = \App\Services\WorkflowService::stage($stageNum);
+                            $overseasFiles = $files->filter(function($att) {
+                                $rName = strtolower($att->uploader->role->name ?? '');
+                                return str_contains($rName, 'overseas') || str_contains($rName, 'agent');
+                            });
+                            $internalFiles = $files->reject(function($att) {
+                                $rName = strtolower($att->uploader->role->name ?? '');
+                                return str_contains($rName, 'overseas') || str_contains($rName, 'agent');
+                            });
+                        @endphp
+                        <div class="mb-4 p-3 rounded-3 border bg-white shadow-2xs">
+                            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                                <span class="badge bg-{{ $stageCfg['color'] }}-subtle text-{{ $stageCfg['color'] }} border border-{{ $stageCfg['color'] }}-subtle px-2 py-1" style="font-size:.78rem">
+                                    <i class="bi {{ $stageCfg['icon'] }} me-1"></i>{{ $stageNum }}. {{ __($stageCfg['label']) }}
+                                </span>
+                                <span class="text-muted small" style="font-size:.72rem">
+                                    {{ $files->count() }} {{ __('file(s)') }}
                                 </span>
                             </div>
-                            <div class="d-flex flex-column gap-2">
-                                @foreach($files as $att)
-                                    @php $vcfg = $att->visibilityConfig(); @endphp
-                                    <div class="d-flex align-items-center gap-2 p-2 rounded-2 border bg-light">
-                                        <i class="bi {{ $att->fileIcon() }} fs-5 flex-shrink-0"></i>
-                                        <div class="flex-grow-1 overflow-hidden">
-                                            <a href="{{ $att->url() }}" target="_blank"
-                                               class="fw-500 small text-truncate d-block text-decoration-none text-dark"
-                                               title="{{ $att->original_name }}">
-                                                {{ $att->original_name }}
-                                            </a>
-                                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                                <span class="text-muted" style="font-size:.7rem">{{ $att->humanSize() }}</span>
-                                                <span class="text-muted" style="font-size:.7rem">· {{ $att->created_at->format('d M Y') }}</span>
-                                                <span class="text-muted" style="font-size:.7rem">· {{ $att->uploader->name }}</span>
-                                                @if($canViewAttachments)
-                                                    <span class="badge bg-{{ $vcfg['color'] }}-subtle text-{{ $vcfg['color'] }} border border-{{ $vcfg['color'] }}-subtle" style="font-size:.62rem">
-                                                        <i class="bi {{ $vcfg['icon'] }} me-1"></i>{{ $vcfg['label'] }}
+
+                            {{-- 1. Internal / Our Side Uploads --}}
+                            @if($internalFiles->count() > 0)
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center gap-2 mb-2 text-primary fw-600 small" style="font-size:.78rem">
+                                    <i class="bi bi-shield-check text-primary"></i>
+                                    <span>{{ __('Internal / Our Side Uploads') }}</span>
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill" style="font-size:.65rem">{{ $internalFiles->count() }}</span>
+                                </div>
+                                <div class="d-flex flex-column gap-2">
+                                    @foreach($internalFiles as $att)
+                                        @php 
+                                            $vcfg = $att->visibilityConfig(); 
+                                            $uploaderRole = $att->uploader->role->name ?? __('Staff');
+                                        @endphp
+                                        <div class="d-flex align-items-center gap-2 p-2 rounded-2 border bg-light">
+                                            <i class="bi {{ $att->fileIcon() }} fs-5 flex-shrink-0 text-primary"></i>
+                                            <div class="flex-grow-1 overflow-hidden">
+                                                <a href="{{ $att->url() }}" target="_blank"
+                                                   class="fw-600 small text-truncate d-block text-decoration-none text-dark"
+                                                   title="{{ $att->original_name }}">
+                                                    {{ $att->original_name }}
+                                                </a>
+                                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                    <span class="text-muted" style="font-size:.7rem">{{ $att->humanSize() }}</span>
+                                                    <span class="text-muted" style="font-size:.7rem">· {{ $att->created_at->format('d M Y, h:i A') }}</span>
+                                                    
+                                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle" style="font-size:.65rem">
+                                                        <i class="bi bi-person-fill me-1"></i>{{ __('Uploaded by') }}: {{ $att->uploader->name }} ({{ $uploaderRole }})
                                                     </span>
+
+                                                    @if($canViewAttachments)
+                                                        <span class="badge bg-{{ $vcfg['color'] }}-subtle text-{{ $vcfg['color'] }} border border-{{ $vcfg['color'] }}-subtle" style="font-size:.62rem">
+                                                            <i class="bi {{ $vcfg['icon'] }} me-1"></i>{{ $vcfg['label'] }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="d-flex gap-1 flex-shrink-0">
+                                                <a href="{{ $att->url() }}" download="{{ $att->original_name }}"
+                                                   class="btn btn-outline-secondary btn-sm btn-action" title="{{ __('Download') }}">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                                @if($canManageAttachments)
+                                                <form action="{{ route('stage-attachments.destroy', [$serviceRequest, $att]) }}"
+                                                      method="POST" onsubmit="return confirm('{{ __('Remove this file?') }}')">
+                                                    @csrf @method('DELETE')
+                                                    <button class="btn btn-outline-danger btn-sm btn-action" title="{{ __('Delete') }}">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="d-flex gap-1 flex-shrink-0">
-                                            <a href="{{ $att->url() }}" download="{{ $att->original_name }}"
-                                               class="btn btn-outline-secondary btn-sm btn-action" title="{{ __('Download') }}">
-                                                <i class="bi bi-download"></i>
-                                            </a>
-                                            @if($canManageAttachments)
-                                            <form action="{{ route('stage-attachments.destroy', [$serviceRequest, $att]) }}"
-                                                  method="POST" onsubmit="return confirm('{{ __('Remove this file?') }}')">
-                                                @csrf @method('DELETE')
-                                                <button class="btn btn-outline-danger btn-sm btn-action" title="{{ __('Delete') }}">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
+                            @endif
+
+                            {{-- 2. Overseas Agent Uploads --}}
+                            @if($overseasFiles->count() > 0)
+                            <div class="mt-2">
+                                <div class="d-flex align-items-center gap-2 mb-2 text-info fw-600 small" style="font-size:.78rem">
+                                    <i class="bi bi-globe2 text-info"></i>
+                                    <span>{{ __('Overseas Agent Uploads') }}</span>
+                                    <span class="badge bg-info-subtle text-info rounded-pill" style="font-size:.65rem">{{ $overseasFiles->count() }}</span>
+                                </div>
+                                <div class="d-flex flex-column gap-2">
+                                    @foreach($overseasFiles as $att)
+                                        @php 
+                                            $vcfg = $att->visibilityConfig(); 
+                                            $uploaderRole = $att->uploader->role->name ?? __('Overseas Agent');
+                                        @endphp
+                                        <div class="d-flex align-items-center gap-2 p-2 rounded-2 border bg-info-subtle border-info-subtle">
+                                            <i class="bi {{ $att->fileIcon() }} fs-5 flex-shrink-0 text-info"></i>
+                                            <div class="flex-grow-1 overflow-hidden">
+                                                <a href="{{ $att->url() }}" target="_blank"
+                                                   class="fw-600 small text-truncate d-block text-decoration-none text-dark"
+                                                   title="{{ $att->original_name }}">
+                                                    {{ $att->original_name }}
+                                                </a>
+                                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                    <span class="text-muted" style="font-size:.7rem">{{ $att->humanSize() }}</span>
+                                                    <span class="text-muted" style="font-size:.7rem">· {{ $att->created_at->format('d M Y, h:i A') }}</span>
+                                                    
+                                                    <span class="badge bg-info text-white" style="font-size:.65rem">
+                                                        <i class="bi bi-globe2 me-1"></i>{{ __('Uploaded by') }}: {{ $att->uploader->name }} ({{ $uploaderRole }})
+                                                    </span>
+
+                                                    @if($canViewAttachments)
+                                                        <span class="badge bg-{{ $vcfg['color'] }}-subtle text-{{ $vcfg['color'] }} border border-{{ $vcfg['color'] }}-subtle" style="font-size:.62rem">
+                                                            <i class="bi {{ $vcfg['icon'] }} me-1"></i>{{ $vcfg['label'] }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="d-flex gap-1 flex-shrink-0">
+                                                <a href="{{ $att->url() }}" download="{{ $att->original_name }}"
+                                                   class="btn btn-outline-secondary btn-sm btn-action" title="{{ __('Download') }}">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                                @if($canManageAttachments)
+                                                <form action="{{ route('stage-attachments.destroy', [$serviceRequest, $att]) }}"
+                                                      method="POST" onsubmit="return confirm('{{ __('Remove this file?') }}')">
+                                                    @csrf @method('DELETE')
+                                                    <button class="btn btn-outline-danger btn-sm btn-action" title="{{ __('Delete') }}">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+
                         </div>
                     @endforeach
                 @endif
