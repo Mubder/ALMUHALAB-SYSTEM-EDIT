@@ -100,11 +100,101 @@
 
         body {
             font-family: var(--font-base);
-            background: var(--color-bg);
+            background: var(--color-bg) !important;
             color: #1e293b;
             font-size: 14.5px;
             line-height: 1.6;
             min-height: 100vh;
+        }
+
+        /* ─────────────────────────────────────────────────
+           KCA UNIFIED COMPONENT OVERRIDES
+        ───────────────────────────────────────────────── */
+        .card, .chart-card {
+            background-color: #ffffff !important;
+            border: 1px solid var(--color-border) !important;
+            border-radius: var(--radius-lg) !important;
+            box-shadow: var(--shadow-sm) !important;
+            transition: var(--transition) !important;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md) !important;
+        }
+
+        .stat-card {
+            background-color: #ffffff !important;
+            border-radius: var(--radius-lg) !important;
+            box-shadow: var(--shadow-sm) !important;
+            transition: var(--transition) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--color-gold) !important;
+            border-color: var(--color-gold) !important;
+            color: #ffffff !important;
+            font-weight: 600 !important;
+            border-radius: var(--radius-md) !important;
+            box-shadow: var(--shadow-xs) !important;
+            transition: var(--transition) !important;
+        }
+
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+            background-color: var(--color-gold-dark) !important;
+            border-color: var(--color-gold-dark) !important;
+            color: #ffffff !important;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-primary {
+            color: var(--color-gold-dark) !important;
+            border-color: var(--color-gold) !important;
+            border-radius: var(--radius-md) !important;
+            font-weight: 600 !important;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--color-gold) !important;
+            border-color: var(--color-gold) !important;
+            color: #ffffff !important;
+        }
+
+        .bg-primary {
+            background-color: var(--color-primary) !important;
+        }
+
+        .text-primary {
+            color: var(--color-gold-dark) !important;
+        }
+
+        .bg-primary-subtle {
+            background-color: #FEF3C7 !important;
+            color: #B45309 !important;
+        }
+
+        .table {
+            --bs-table-bg: transparent;
+            border-color: var(--color-border) !important;
+        }
+
+        .table thead th {
+            background-color: #F8FAFC !important;
+            color: var(--color-muted) !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            font-size: 0.72rem !important;
+            letter-spacing: 0.05em !important;
+            border-bottom: 2px solid var(--color-border) !important;
+        }
+
+        .form-control, .form-select {
+            border-color: var(--color-border) !important;
+            border-radius: var(--radius-md) !important;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--color-gold) !important;
+            box-shadow: 0 0 0 0.2rem rgba(217, 119, 6, 0.15) !important;
         }
 
         /* Custom scrollbar (webkit) */
