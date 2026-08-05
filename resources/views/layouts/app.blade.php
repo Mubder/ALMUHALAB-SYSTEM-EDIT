@@ -108,92 +108,145 @@
         }
 
         /* ─────────────────────────────────────────────────
-           KCA UNIFIED COMPONENT OVERRIDES
+           KCA UNIFIED SYSTEM-WIDE DESIGN SYSTEM
         ───────────────────────────────────────────────── */
-        .card, .chart-card {
+        body {
+            background-color: #FAF8F5 !important; /* KCA Cream Warm */
+            color: #0F172A !important;
+        }
+
+        /* Container Cards (Page Card, Stat Card, Chart Card, Card, Modals) */
+        .page-card, .card, .chart-card, .stat-card, .modal-content, .dropdown-menu {
             background-color: #ffffff !important;
-            border: 1px solid var(--color-border) !important;
-            border-radius: var(--radius-lg) !important;
-            box-shadow: var(--shadow-sm) !important;
+            border: 1px solid #CBD5E1 !important; /* Crisp Slate Border */
+            border-radius: 16px !important;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+            padding: 1.25rem 1.5rem !important;
             transition: var(--transition) !important;
         }
 
-        .card:hover {
-            box-shadow: var(--shadow-md) !important;
+        .page-card:hover, .card:hover, .stat-card:hover, .chart-card:hover {
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.09) !important;
+            border-color: #94A3B8 !important;
         }
 
-        .stat-card {
-            background-color: #ffffff !important;
-            border-radius: var(--radius-lg) !important;
-            box-shadow: var(--shadow-sm) !important;
-            transition: var(--transition) !important;
+        /* Inner List Items & Row Cards (Request Row, Activity Item, List Group) */
+        .request-row, .activity-item, .list-group-item, .stage-item-card {
+            background: #F8FAFC !important; /* Crisp contrast slate background */
+            border: 1px solid #E2E8F0 !important; /* Defined inner border */
+            border-radius: 12px !important;
+            padding: 0.85rem 1.15rem !important;
+            margin-bottom: 0.65rem !important;
+            transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
         }
 
+        .request-row:hover, .activity-item:hover, .list-group-item:hover {
+            background: #FEF3C7 !important; /* KCA Gold Soft on Hover */
+            border-color: #D97706 !important; /* Gold Border Accent */
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.12) !important;
+        }
+
+        /* Section Headings inside Cards */
+        .page-card h6, .chart-card h6, .card-title, .section-title {
+            font-size: 0.78rem !important;
+            letter-spacing: 0.08em !important;
+            text-transform: uppercase !important;
+            color: #0F172A !important;
+            font-weight: 800 !important;
+            margin-bottom: 1.15rem !important;
+        }
+
+        /* Badges & Pills */
+        .badge {
+            border-radius: 999px !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.03em !important;
+            padding: 0.35rem 0.75rem !important;
+            border: 1px solid transparent !important;
+        }
+
+        .badge.bg-primary-subtle, .badge.bg-warning-subtle {
+            background-color: #FEF3C7 !important;
+            color: #B45309 !important;
+            border-color: #FDE68A !important;
+        }
+
+        /* Buttons */
         .btn-primary {
-            background-color: var(--color-gold) !important;
-            border-color: var(--color-gold) !important;
+            background-color: #D97706 !important;
+            border-color: #D97706 !important;
             color: #ffffff !important;
-            font-weight: 600 !important;
-            border-radius: var(--radius-md) !important;
-            box-shadow: var(--shadow-xs) !important;
-            transition: var(--transition) !important;
+            font-weight: 700 !important;
+            border-radius: 10px !important;
+            padding: 0.5rem 1.25rem !important;
+            box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25) !important;
         }
 
         .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
-            background-color: var(--color-gold-dark) !important;
-            border-color: var(--color-gold-dark) !important;
+            background-color: #B45309 !important;
+            border-color: #B45309 !important;
             color: #ffffff !important;
-            transform: translateY(-1px);
+            transform: translateY(-1px) !important;
         }
 
-        .btn-outline-primary {
-            color: var(--color-gold-dark) !important;
-            border-color: var(--color-gold) !important;
-            border-radius: var(--radius-md) !important;
+        .btn-outline-secondary, .btn-outline-primary {
+            border-color: #CBD5E1 !important;
+            color: #0F172A !important;
             font-weight: 600 !important;
+            border-radius: 10px !important;
+            background: #ffffff !important;
         }
 
-        .btn-outline-primary:hover {
-            background-color: var(--color-gold) !important;
-            border-color: var(--color-gold) !important;
+        .btn-outline-secondary:hover, .btn-outline-primary:hover {
+            background-color: #D97706 !important;
+            border-color: #D97706 !important;
             color: #ffffff !important;
         }
 
-        .bg-primary {
-            background-color: var(--color-primary) !important;
-        }
-
-        .text-primary {
-            color: var(--color-gold-dark) !important;
-        }
-
-        .bg-primary-subtle {
-            background-color: #FEF3C7 !important;
-            color: #B45309 !important;
+        /* Data Tables */
+        .table-responsive {
+            background: #ffffff !important;
+            border-radius: 16px !important;
+            border: 1px solid #CBD5E1 !important;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+            padding: 0.5rem !important;
+            overflow: hidden !important;
         }
 
         .table {
             --bs-table-bg: transparent;
-            border-color: var(--color-border) !important;
+            margin-bottom: 0 !important;
         }
 
         .table thead th {
             background-color: #F8FAFC !important;
-            color: var(--color-muted) !important;
-            font-weight: 700 !important;
+            color: #64748B !important;
+            font-weight: 800 !important;
             text-transform: uppercase !important;
-            font-size: 0.72rem !important;
-            letter-spacing: 0.05em !important;
-            border-bottom: 2px solid var(--color-border) !important;
+            font-size: 0.7rem !important;
+            letter-spacing: 0.06em !important;
+            border-bottom: 2px solid #E2E8F0 !important;
+            padding: 0.85rem 1rem !important;
+        }
+
+        .table tbody td {
+            border-bottom: 1px solid #F1F5F9 !important;
+            padding: 0.85rem 1rem !important;
+            vertical-align: middle !important;
+        }
+
+        .table tbody tr:hover td {
+            background-color: #FEF3C7 !important;
         }
 
         .form-control, .form-select {
-            border-color: var(--color-border) !important;
-            border-radius: var(--radius-md) !important;
+            border-color: #CBD5E1 !important;
+            border-radius: 10px !important;
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: var(--color-gold) !important;
+            border-color: #D97706 !important;
             box-shadow: 0 0 0 0.2rem rgba(217, 119, 6, 0.15) !important;
         }
 

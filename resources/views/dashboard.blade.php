@@ -447,31 +447,35 @@
                     {{ __('No activity yet.') }}
                 </div>
             @else
-                <div class="d-flex flex-column gap-3">
+                <div class="d-flex flex-column gap-2">
                     @foreach($recentActivity as $log)
                         @php
                             [$icon, $color, $label] = $actionLabels[$log->action]
                                 ?? ['bi-circle', 'text-secondary', ucwords(str_replace('_',' ',$log->action))];
                             $actor = $actors[$log->user] ?? null;
                         @endphp
-                        <div class="d-flex align-items-start gap-2">
-                            <i class="bi {{ $icon }} {{ $color }} flex-shrink-0" style="font-size:.9rem;margin-top:.15rem"></i>
-                            <div class="flex-grow-1 overflow-hidden">
-                                <div class="small">
-                                    <span class="fw-500">{{ $label }}</span>
-                                    @if($actor) <span class="text-muted">{{ __('by') }} {{ $actor }}</span> @endif
-                                    @if(isset($log->changes['title']))
-                                        <span class="text-muted">— {{ Str::limit($log->changes['title'], 28) }}</span>
-                                    @elseif(isset($log->changes['after']['title']))
-                                        <span class="text-muted">— {{ Str::limit($log->changes['after']['title'], 28) }}</span>
-                                    @endif
+                        <div class="activity-item d-flex align-items-center justify-content-between gap-3">
+                            <div class="d-flex align-items-center gap-3 overflow-hidden">
+                                <span class="rounded-circle p-2 bg-white border border-slate-200 d-inline-flex align-items-center justify-content-center flex-shrink-0" style="width:2.2rem;height:2.2rem">
+                                    <i class="bi {{ $icon }} {{ $color }}" style="font-size:1rem"></i>
+                                </span>
+                                <div class="overflow-hidden">
+                                    <div class="small fw-bold text-navy">
+                                        <span>{{ $label }}</span>
+                                        @if($actor) <span class="text-muted fw-normal">{{ __('by') }} <strong>{{ $actor }}</strong></span> @endif
+                                        @if(isset($log->changes['title']))
+                                            <span class="text-muted font-normal">— {{ Str::limit($log->changes['title'], 28) }}</span>
+                                        @elseif(isset($log->changes['after']['title']))
+                                            <span class="text-muted font-normal">— {{ Str::limit($log->changes['after']['title'], 28) }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="text-muted" style="font-size:.7rem">{{ $log->created_at->diffForHumans() }}</div>
                                 </div>
-                                <div class="text-muted" style="font-size:.7rem">{{ $log->created_at->diffForHumans() }}</div>
                             </div>
                             @if($log->subject_type === 'App\Models\ServiceRequest' && $log->subject_id)
                             <a href="{{ route('service-requests.show', $log->subject_id) }}"
-                               class="btn btn-outline-secondary btn-sm btn-action flex-shrink-0" style="padding:.15rem .4rem">
-                                <i class="bi bi-arrow-right" style="font-size:.7rem"></i>
+                               class="btn btn-outline-secondary btn-sm flex-shrink-0" style="padding:.25rem .55rem">
+                                <i class="bi bi-arrow-right" style="font-size:.75rem"></i>
                             </a>
                             @endif
                         </div>
