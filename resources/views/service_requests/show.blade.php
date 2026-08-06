@@ -141,7 +141,7 @@
                 </div>
                 <div class="text-muted small">
                     <i class="bi bi-calendar3 me-1"></i>{{ __('Submitted') }} {{ $serviceRequest->created_at->format('d M Y') }}
-                    @if($canTransition)
+                    @if(!$isOverseasAgent && $canTransition)
                         &nbsp;·&nbsp;<i class="bi bi-person me-1"></i>{{ $serviceRequest->user->name }}
                     @endif
                     @if($canAudit)
@@ -647,13 +647,26 @@
                     @foreach($grouped as $stageNum => $files)
                         @php 
                             $stageCfg = \App\Services\WorkflowService::stage($stageNum);
+                            
+                            // 1. Client / User Uploads
+                            $clientFiles = $files->filter(function($att) use ($serviceRequest) {
+                                $rName = strtolower($att->uploader->role->name ?? '');
+                                return $att->uploaded_by === $serviceRequest->user_id || $rName === 'client';
+                            });
+
+                            // 2. Overseas Agent Uploads
                             $overseasFiles = $files->filter(function($att) {
                                 $rName = strtolower($att->uploader->role->name ?? '');
                                 return str_contains($rName, 'overseas') || str_contains($rName, 'agent');
                             });
-                            $internalFiles = $files->reject(function($att) {
+
+                            // 3. Employee / Admin Uploads
+                            $employeeFiles = $files->reject(function($att) use ($serviceRequest) {
                                 $rName = strtolower($att->uploader->role->name ?? '');
-                                return str_contains($rName, 'overseas') || str_contains($rName, 'agent');
+                                return $att->uploaded_by === $serviceRequest->user_id || 
+                                       $rName === 'client' || 
+                                       str_contains($rName, 'overseas') || 
+                                       str_contains($rName, 'agent');
                             });
                         @endphp
                         <div class="mb-4 p-3 rounded-3 border bg-white shadow-2xs">
@@ -666,16 +679,68 @@
                                 </span>
                             </div>
 
-                            {{-- 1. Internal / Our Side Uploads --}}
-                            @if($internalFiles->count() > 0)
+                            {{-- 1. User / Client Uploads --}}
+                            @if($clientFiles->count() > 0)
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center gap-2 mb-2 text-success fw-600 small" style="font-size:.78rem">
+                                    <i class="bi bi-person-circle text-success"></i>
+                                    <span>{{ __('User / Client Uploads') }}</span>
+                                    <span class="badge bg-success-subtle text-success rounded-pill" style="font-size:.65rem">{{ $clientFiles->count() }}</span>
+                                </div>
+                                <div class="d-flex flex-column gap-2">
+                                    @foreach($clientFiles as $att)
+                                        @php 
+                                            $vcfg = $att->visibilityConfig(); 
+                                            $uploaderRole = $att->uploader->role->name ?? __('Client');
+                                        @endphp
+                                        <div class="d-flex align-items-center gap-2 p-2 rounded-2 border bg-light">
+                                            <i class="bi {{ $att->fileIcon() }} fs-5 flex-shrink-0 text-success"></i>
+                                            <div class="flex-grow-1 overflow-hidden">
+                                                <a href="{{ $att->url() }}" target="_blank"
+                                                   class="fw-600 small text-truncate d-block text-decoration-none text-dark"
+                                                   title="{{ $att->original_name }}">
+                                                    {{ $att->original_name }}
+                                                </a>
+                                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                    <span class="text-muted" style="font-size:.7rem">{{ $att->humanSize() }}</span>
+                                                    <span class="text-muted" style="font-size:.7rem">· {{ $att->created_at->format('d M Y, h:i A') }}</span>
+                                                    
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:.65rem">
+                                                        <i class="bi bi-person-fill me-1"></i>{{ __('Uploaded by') }}: {{ $att->uploader->name }} ({{ $uploaderRole }})
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex gap-1 flex-shrink-0">
+                                                <a href="{{ $att->url() }}" download="{{ $att->original_name }}"
+                                                   class="btn btn-outline-secondary btn-sm btn-action" title="{{ __('Download') }}">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                                @if($canManageAttachments)
+                                                <form action="{{ route('stage-attachments.destroy', [$serviceRequest, $att]) }}"
+                                                      method="POST" onsubmit="return confirm('{{ __('Remove this file?') }}')">
+                                                    @csrf @method('DELETE')
+                                                    <button class="btn btn-outline-danger btn-sm btn-action" title="{{ __('Delete') }}">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+
+                            {{-- 2. Employee / Admin Uploads --}}
+                            @if($employeeFiles->count() > 0)
                             <div class="mb-3">
                                 <div class="d-flex align-items-center gap-2 mb-2 text-primary fw-600 small" style="font-size:.78rem">
                                     <i class="bi bi-shield-check text-primary"></i>
-                                    <span>{{ __('Internal / Our Side Uploads') }}</span>
-                                    <span class="badge bg-primary-subtle text-primary rounded-pill" style="font-size:.65rem">{{ $internalFiles->count() }}</span>
+                                    <span>{{ __('Employee / Admin Uploads') }}</span>
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill" style="font-size:.65rem">{{ $employeeFiles->count() }}</span>
                                 </div>
                                 <div class="d-flex flex-column gap-2">
-                                    @foreach($internalFiles as $att)
+                                    @foreach($employeeFiles as $att)
                                         @php 
                                             $vcfg = $att->visibilityConfig(); 
                                             $uploaderRole = $att->uploader->role->name ?? __('Staff');
@@ -1031,7 +1096,8 @@
             </div>
             @endif
 
-            {{-- Request Details (collapsible) --}}
+            {{-- Request Details (collapsible - hidden from Overseas Agents) --}}
+            @if(!$isOverseasAgent)
             <div class="page-card mb-4">
                 <a class="d-flex justify-content-between align-items-center text-decoration-none text-dark fw-bold"
                    data-bs-toggle="collapse" href="#requestDetails">
@@ -1229,6 +1295,7 @@
 
                 </div>
             </div>
+            @endif
 
         </div>{{-- /col-lg-4 --}}
     </div>{{-- /row --}}

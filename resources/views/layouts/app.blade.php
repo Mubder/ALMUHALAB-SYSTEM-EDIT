@@ -165,6 +165,26 @@
             margin: 0.4rem 0 !important;
         }
 
+        /* Active Radio Button Toggles (.btn-check:checked) */
+        .btn-check:checked + .btn-outline-success {
+            background-color: #16a34a !important;
+            color: #ffffff !important;
+            border-color: #16a34a !important;
+            box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3) !important;
+        }
+        .btn-check:checked + .btn-outline-primary {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3) !important;
+        }
+        .btn-check:checked + .btn-outline-danger {
+            background-color: #dc2626 !important;
+            color: #ffffff !important;
+            border-color: #dc2626 !important;
+            box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3) !important;
+        }
+
         .page-card:hover, .card:hover, .stat-card:hover, .chart-card:hover {
             box-shadow: 0 10px 25px rgba(15, 23, 42, 0.09) !important;
             border-color: #94A3B8 !important;

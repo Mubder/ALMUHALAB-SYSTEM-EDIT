@@ -60,14 +60,27 @@ class StageAttachment extends Model
 
     public function isVisibleTo(User $user, ServiceRequest $sr): bool
     {
-        // Uploader can ALWAYS view their own uploaded file!
-        if ($this->uploaded_by === $user->id) {
-            return true;
+        $uploaderRole        = strtolower($this->uploader->role->name ?? '');
+        $isUploadedByOverseas = str_contains($uploaderRole, 'overseas') || str_contains($uploaderRole, 'agent');
+        $isUploadedByClient   = $this->uploaded_by === $sr->user_id || $uploaderRole === 'client';
+
+        $userRole        = strtolower($user->role->name ?? '');
+        $isOverseasUser  = str_contains($userRole, 'overseas') || str_contains($userRole, 'agent');
+        $isAdmin         = $user->hasPermission('manage_users') || $user->hasPermission('transition_stage');
+
+        // Note 4: Attachments uploaded by Overseas Agent are STRICTLY visible to ADMINS & the uploader themselves ONLY
+        if ($isUploadedByOverseas) {
+            return $isAdmin || $this->uploaded_by === $user->id;
         }
 
-        // Overseas Agent uploaded files are ONLY visible to Admins/Founders
-        if ($this->uploader && $this->uploader->role && str_contains(strtolower($this->uploader->role->name), 'overseas')) {
-            return $user->hasPermission('manage_users') || $user->hasPermission('transition_stage');
+        // Notes 2 & 3: For Overseas Agent user viewing attachments:
+        // - Note 2: Attachments by User/Client are NOT exposed to Overseas Agent
+        // - Note 3: Attachments by Employee/Admin are visible to Overseas Agent
+        if ($isOverseasUser) {
+            if ($isUploadedByClient) {
+                return false;
+            }
+            return true; // Employee/Admin attachments are visible
         }
 
         if ($user->hasPermission('manage_attachments')) return true;
