@@ -116,13 +116,53 @@
         }
 
         /* Container Cards (Page Card, Stat Card, Chart Card, Card, Modals) */
-        .page-card, .card, .chart-card, .stat-card, .modal-content, .dropdown-menu {
+        .page-card, .card, .chart-card, .stat-card, .modal-content {
             background-color: #ffffff !important;
             border: 1px solid #CBD5E1 !important; /* Crisp Slate Border */
             border-radius: 16px !important;
             box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
             padding: 1.25rem 1.5rem !important;
             transition: var(--transition) !important;
+        }
+
+        /* Dropdown Menus - Deep Navy with Crisp White Text */
+        .dropdown-menu, .site-nav .dropdown-menu {
+            background-color: #0F172A !important;
+            border: 1px solid #1E293B !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+            padding: 0.5rem !important;
+        }
+
+        .dropdown-item, .site-nav .dropdown-menu .dropdown-item {
+            color: #F8FAFC !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            padding: 0.6rem 1rem !important;
+            border-radius: 8px !important;
+            transition: background 0.15s ease, color 0.15s ease !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.55rem !important;
+        }
+
+        .dropdown-item:hover, .site-nav .dropdown-menu .dropdown-item:hover {
+            background-color: #D97706 !important;
+            color: #ffffff !important;
+        }
+
+        .dropdown-item.text-danger, .site-nav .dropdown-menu .dropdown-item.text-danger {
+            color: #f87171 !important;
+        }
+
+        .dropdown-item.text-danger:hover, .site-nav .dropdown-menu .dropdown-item.text-danger:hover {
+            background-color: rgba(239, 68, 68, 0.2) !important;
+            color: #ffffff !important;
+        }
+
+        .dropdown-divider, .site-nav .dropdown-menu hr {
+            border-top: 1px solid #334155 !important;
+            margin: 0.4rem 0 !important;
         }
 
         .page-card:hover, .card:hover, .stat-card:hover, .chart-card:hover {

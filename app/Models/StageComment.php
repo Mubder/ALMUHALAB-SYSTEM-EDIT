@@ -57,6 +57,11 @@ class StageComment extends Model
 
     public function isVisibleTo(User $user): bool
     {
+        // Overseas Agent notes and responses are ONLY visible to Admins/Founders
+        if ($this->creator && $this->creator->role && str_contains(strtolower($this->creator->role->name), 'overseas')) {
+            return $user->hasPermission('manage_users') || $user->hasPermission('transition_stage');
+        }
+
         if ($this->visibility === 'all') return true;
         if ($this->visibility === 'employee') return $user->hasPermission('transition_stage') || $user->hasPermission('manage_users');
         if ($this->visibility === 'admin')    return $user->hasPermission('manage_users');

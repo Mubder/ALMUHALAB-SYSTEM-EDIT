@@ -715,8 +715,8 @@
                             </div>
                             @endif
 
-                            {{-- 2. Overseas Agent Uploads --}}
-                            @if($overseasFiles->count() > 0)
+                            {{-- 2. Overseas Agent Uploads (Admins/Founders/Staff Only) --}}
+                            @if(!$isClient && ($canTransition || auth()->user()->hasPermission('manage_users')) && $overseasFiles->count() > 0)
                             <div class="mt-2">
                                 <div class="d-flex align-items-center gap-2 mb-2 text-info fw-600 small" style="font-size:.78rem">
                                     <i class="bi bi-globe2 text-info"></i>
