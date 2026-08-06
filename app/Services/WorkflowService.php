@@ -292,7 +292,11 @@ class WorkflowService
         $recipients = self::getRecipients($sr, $actor);
 
         foreach ($recipients as $user) {
-            $user->notify(new StageTransitionNotification($sr, $fromStage, $toStage, $action, $actor));
+            try {
+                $user->notify(new StageTransitionNotification($sr, $fromStage, $toStage, $action, $actor));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Notification failed during stage transition: ' . $e->getMessage());
+            }
         }
     }
 
@@ -310,7 +314,11 @@ class WorkflowService
         $recipients = self::getRecipients($sr, $actor);
 
         foreach ($recipients as $user) {
-            $user->notify(new StageStatusChangedNotification($sr, $from, $to, $actor));
+            try {
+                $user->notify(new StageStatusChangedNotification($sr, $from, $to, $actor));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Notification failed during status change: ' . $e->getMessage());
+            }
         }
     }
 

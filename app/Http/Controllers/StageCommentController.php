@@ -48,7 +48,11 @@ class StageCommentController extends Controller
             if ($data['visibility'] !== 'all' && $recipient->id === $serviceRequest->user_id) {
                 continue;
             }
-            $recipient->notify(new CommentAddedNotification($serviceRequest, $comment, $user));
+            try {
+                $recipient->notify(new CommentAddedNotification($serviceRequest, $comment, $user));
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error("Failed sending comment notification email to user {$recipient->id}: " . $e->getMessage());
+            }
         }
 
         return back()->with('success', 'Comment added.');

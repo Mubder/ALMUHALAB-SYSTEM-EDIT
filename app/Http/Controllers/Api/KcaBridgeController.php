@@ -49,19 +49,44 @@ class KcaBridgeController extends Controller
     {
         $this->authorizeBridge($request);
 
-        $logs = ActivityLog::with('user')->latest()->limit(100)->get()->map(function ($log) {
-            return [
-                'id'           => $log->id,
-                'user'         => $log->user ? $log->user->name : 'System',
-                'action'       => $log->action,
-                'subject_type' => $log->subject_type,
-                'subject_id'   => $log->subject_id,
-                'changes'      => $log->changes,
-                'created_at'   => $log->created_at ? $log->created_at->toIso8601String() : null,
-            ];
-        });
+        try {
+            $logs = ActivityLog::latest()->limit(100)->get()->map(function ($log) {
+                $userName = 'System';
+                if ($log->user) {
+                    if (is_numeric($log->user)) {
+                        $u = \App\Models\User::find($log->user);
+                        if ($u) {
+                            $userName = $u->name;
+                        }
+                    } else {
+                        $userName = (string) $log->user;
+                    }
+                }
 
-        return response()->json($logs);
+                $changes = $log->changes;
+                if (is_string($changes)) {
+                    $decoded = json_decode($changes, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        $changes = $decoded;
+                    }
+                }
+
+                return [
+                    'id'           => $log->id,
+                    'user'         => $userName,
+                    'action'       => $log->action,
+                    'subject_type' => $log->subject_type,
+                    'subject_id'   => $log->subject_id,
+                    'changes'      => $changes,
+                    'created_at'   => $log->created_at ? $log->created_at->toIso8601String() : null,
+                ];
+            });
+
+            return response()->json($logs);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error("Bridge auditLogs error: " . $e->getMessage());
+            return response()->json([]);
+        }
     }
 
     /**
