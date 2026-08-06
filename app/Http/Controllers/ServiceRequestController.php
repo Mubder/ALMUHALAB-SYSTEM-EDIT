@@ -16,7 +16,8 @@ class ServiceRequestController extends Controller
     public function index(Request $request)
     {
         $user    = auth()->user();
-        $isStaff = $user->role_id !== null || $user->hasPermission('edit_request') || $user->hasPermission('transition_stage') || $user->hasPermission('view_all_requests');
+        $isAdmin = $user->hasPermission('edit_request') || $user->hasPermission('manage_users');
+        $isStaff = $user->role_id !== null || $isAdmin || $user->hasPermission('transition_stage') || $user->hasPermission('view_all_requests');
 
         $baseQuery = $isStaff
             ? ServiceRequest::query()
