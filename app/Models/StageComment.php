@@ -57,6 +57,11 @@ class StageComment extends Model
 
     public function isVisibleTo(User $user): bool
     {
+        // Creator can ALWAYS view their own posted comment/note!
+        if ($this->created_by === $user->id) {
+            return true;
+        }
+
         // Overseas Agent notes and responses are ONLY visible to Admins/Founders
         if ($this->creator && $this->creator->role && str_contains(strtolower($this->creator->role->name), 'overseas')) {
             return $user->hasPermission('manage_users') || $user->hasPermission('transition_stage');

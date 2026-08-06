@@ -13,6 +13,7 @@
     $canEdit        = $user->hasPermission('edit_request') || $serviceRequest->user_id === $user->id;
     $canDelete      = $user->hasPermission('delete_request') || $serviceRequest->user_id === $user->id;
     $canAudit             = $user->hasPermission('view_audit_log');
+    $isOverseasAgent      = $user->role && str_contains(strtolower($user->role->name), 'overseas');
     $canSeeInternal       = $user->hasPermission('view_all_comments') || $user->hasPermission('transition_stage');
     $isClient             = $serviceRequest->user_id === $user->id && !$canTransition;
     $canManageAttachments = $user->hasPermission('manage_attachments');
@@ -488,7 +489,15 @@
                             {{ strtoupper(substr($user->name, 0, 1)) }}
                         </div>
                         <div class="flex-grow-1">
-                            @if($canSeeInternal)
+                            @if($isOverseasAgent)
+                            {{-- Overseas Agents can ONLY post Admin Only notes --}}
+                            <input type="hidden" name="visibility" value="admin">
+                            <div class="mb-2">
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-1 px-2" style="font-size:.75rem">
+                                    <i class="bi bi-shield-lock me-1"></i>{{ __('Note to Admin Only') }}
+                                </span>
+                            </div>
+                            @elseif($canSeeInternal)
                             {{-- Tab switcher for staff --}}
                             <div class="mb-2" id="comment-type-tabs">
                                 <div class="btn-group btn-group-sm" role="group">
@@ -715,8 +724,8 @@
                             </div>
                             @endif
 
-                            {{-- 2. Overseas Agent Uploads (Admins/Founders/Staff Only) --}}
-                            @if(!$isClient && ($canTransition || auth()->user()->hasPermission('manage_users')) && $overseasFiles->count() > 0)
+                            {{-- 2. Overseas Agent Uploads (Admins/Founders/Staff & Overseas Agent Uploader) --}}
+                            @if(($isOverseasAgent || !$isClient) && $overseasFiles->count() > 0)
                             <div class="mt-2">
                                 <div class="d-flex align-items-center gap-2 mb-2 text-info fw-600 small" style="font-size:.78rem">
                                     <i class="bi bi-globe2 text-info"></i>

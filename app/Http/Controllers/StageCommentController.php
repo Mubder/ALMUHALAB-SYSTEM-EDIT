@@ -19,9 +19,11 @@ class StageCommentController extends Controller
         ]);
 
         $user = auth()->user();
+        $isOverseasAgent = $user->role && str_contains(strtolower($user->role->name), 'overseas');
 
-        // Clients can only post client-visible comments
-        if (! $user->hasPermission('transition_stage') && ! $user->hasPermission('manage_users')) {
+        if ($isOverseasAgent) {
+            $data['visibility'] = 'admin';
+        } elseif (! $user->hasPermission('transition_stage') && ! $user->hasPermission('manage_users')) {
             $data['visibility'] = 'all';
         }
 

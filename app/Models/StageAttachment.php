@@ -60,6 +60,11 @@ class StageAttachment extends Model
 
     public function isVisibleTo(User $user, ServiceRequest $sr): bool
     {
+        // Uploader can ALWAYS view their own uploaded file!
+        if ($this->uploaded_by === $user->id) {
+            return true;
+        }
+
         // Overseas Agent uploaded files are ONLY visible to Admins/Founders
         if ($this->uploader && $this->uploader->role && str_contains(strtolower($this->uploader->role->name), 'overseas')) {
             return $user->hasPermission('manage_users') || $user->hasPermission('transition_stage');
