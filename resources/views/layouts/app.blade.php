@@ -98,7 +98,7 @@
             font-family: var(--font-base);
             background: var(--color-bg) !important;
             color: #1e293b;
-            font-size: 14.5px;
+            font-size: 15.5px;
             line-height: 1.6;
             min-height: 100vh;
         }
