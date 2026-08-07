@@ -9,11 +9,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    @if(app()->isLocale('ar'))
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
-    @else
-        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    @endif
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 
     {{-- Bootstrap CSS + Icons: always from CDN (Bootstrap JS loaded in footer) --}}
     @if(app()->isLocale('ar'))
@@ -28,7 +24,7 @@
            KCA CLONED UNIFIED DESIGN TOKENS
         ───────────────────────────────────────────────── */
         :root {
-            --font-base: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+            --font-base: 'Rubik', system-ui, -apple-system, sans-serif;
 
             --color-bg:          #FAF8F5; /* KCA Cream Warm */
             --color-surface:     #ffffff;
@@ -71,7 +67,7 @@
            ARABIC / RTL OVERRIDES
         ───────────────────────────────────────────────── */
         html[lang="ar"] {
-            --font-base: 'Cairo', system-ui, sans-serif;
+            --font-base: 'Rubik', system-ui, sans-serif;
         }
         html[lang="ar"] body {
             letter-spacing: 0;
