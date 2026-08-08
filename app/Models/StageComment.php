@@ -62,23 +62,27 @@ class StageComment extends Model
             return true;
         }
 
-        $userRole       = strtolower($user->role->name ?? '');
-        $isOverseasUser = str_contains($userRole, 'overseas') || str_contains($userRole, 'agent');
-        $isAdmin        = $user->hasPermission('manage_users') || $user->hasPermission('transition_stage');
+        $creatorRole         = strtolower($this->creator->role->name ?? '');
+        $isCreatedByOverseas = str_contains($creatorRole, 'overseas') || str_contains($creatorRole, 'agent');
+        $isAdmin             = $user->isAdminOrFounder();
+        $isOverseasUser      = $user->isOverseasAgent();
 
-        // Note 4: Overseas Agent notes/responses are ONLY visible to Admins/Founders
-        if ($this->creator && $this->creator->role && (str_contains(strtolower($this->creator->role->name), 'overseas') || str_contains(strtolower($this->creator->role->name), 'agent'))) {
+        // 1. Comments/notes created by Overseas Agent:
+        // STRICTLY visible ONLY to Admins/Founders and the creator themselves
+        if ($isCreatedByOverseas) {
             return $isAdmin;
         }
 
-        // Note 5: Overseas Agent user can see Admin/Employee comments
+        // 2. Overseas Agent viewing comments:
+        // Can see Admin & Employee comments
         if ($isOverseasUser) {
             return $this->visibility === 'admin' || $this->visibility === 'employee' || $isAdmin;
         }
 
+        // 3. Regular users viewing comments:
         if ($this->visibility === 'all') return true;
-        if ($this->visibility === 'employee') return $user->hasPermission('transition_stage') || $user->hasPermission('manage_users');
-        if ($this->visibility === 'admin')    return $user->hasPermission('manage_users');
+        if ($this->visibility === 'employee') return $user->hasPermission('transition_stage') || $isAdmin;
+        if ($this->visibility === 'admin')    return $isAdmin;
         return false;
     }
 }

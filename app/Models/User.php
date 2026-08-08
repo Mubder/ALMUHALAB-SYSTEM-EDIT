@@ -70,4 +70,25 @@ class User extends Authenticatable
         }
         $this->save();
     }
+
+    public function isAdminOrFounder(): bool
+    {
+        if ($this->hasPermission('manage_users')) {
+            return true;
+        }
+        $rName = strtolower($this->role->name ?? '');
+        return str_contains($rName, 'admin') || str_contains($rName, 'founder');
+    }
+
+    public function isOverseasAgent(): bool
+    {
+        $rName = strtolower($this->role->name ?? '');
+        return str_contains($rName, 'overseas') || str_contains($rName, 'agent');
+    }
+
+    public function isClient(): bool
+    {
+        $rName = strtolower($this->role->name ?? '');
+        return $rName === 'client' || (!$this->role_id && !$this->hasPermission('transition_stage'));
+    }
 }

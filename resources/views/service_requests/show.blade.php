@@ -789,8 +789,8 @@
                             </div>
                             @endif
 
-                            {{-- 2. Overseas Agent Uploads (Admins/Founders/Staff & Overseas Agent Uploader) --}}
-                            @if(($isOverseasAgent || !$isClient) && $overseasFiles->count() > 0)
+                            {{-- 3. Overseas Agent Uploads (STRICTLY Admins/Founders & Overseas Agent Uploader) --}}
+                            @if(($isOverseasAgent || $user->isAdminOrFounder()) && $overseasFiles->count() > 0)
                             <div class="mt-2">
                                 <div class="d-flex align-items-center gap-2 mb-2 text-info fw-600 small" style="font-size:.78rem">
                                     <i class="bi bi-globe2 text-info"></i>

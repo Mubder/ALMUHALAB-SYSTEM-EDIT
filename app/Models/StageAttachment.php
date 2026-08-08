@@ -60,35 +60,39 @@ class StageAttachment extends Model
 
     public function isVisibleTo(User $user, ServiceRequest $sr): bool
     {
-        $uploaderRole        = strtolower($this->uploader->role->name ?? '');
+        $uploaderRole         = strtolower($this->uploader->role->name ?? '');
         $isUploadedByOverseas = str_contains($uploaderRole, 'overseas') || str_contains($uploaderRole, 'agent');
         $isUploadedByClient   = $this->uploaded_by === $sr->user_id || $uploaderRole === 'client';
 
-        $userRole        = strtolower($user->role->name ?? '');
-        $isOverseasUser  = str_contains($userRole, 'overseas') || str_contains($userRole, 'agent');
-        $isAdmin         = $user->hasPermission('manage_users') || $user->hasPermission('transition_stage');
+        $isAdmin        = $user->isAdminOrFounder();
+        $isOverseasUser = $user->isOverseasAgent();
 
-        // Note 4: Attachments uploaded by Overseas Agent are STRICTLY visible to ADMINS & the uploader themselves ONLY
+        // 1. OVERSEAS UPLOADS: Strictly visible ONLY to Admins/Founders and the uploader themselves
         if ($isUploadedByOverseas) {
             return $isAdmin || $this->uploaded_by === $user->id;
         }
 
-        // Notes 2 & 3: For Overseas Agent user viewing attachments:
-        // - Note 2: Attachments by User/Client are NOT exposed to Overseas Agent
-        // - Note 3: Attachments by Employee/Admin are visible to Overseas Agent
+        // 2. OVERSEAS USER VIEWING: Cannot see Client uploads; can see Employee/Admin uploads
         if ($isOverseasUser) {
-            if ($isUploadedByClient) {
-                return false;
-            }
-            return true; // Employee/Admin attachments are visible
+            return !$isUploadedByClient;
         }
 
-        if ($user->hasPermission('manage_attachments')) return true;
+        // 3. REGULAR USERS / STAFF / CLIENTS VIEWING:
+        // Uploader can always view their own uploaded file
+        if ($this->uploaded_by === $user->id) {
+            return true;
+        }
 
+        // Admins/Founders can view all non-overseas attachments
+        if ($isAdmin) {
+            return true;
+        }
+
+        // Regular staff/employees or clients check visibility level
         return match ($this->visibility) {
             'client'   => $sr->user_id === $user->id || $user->hasPermission('view_attachments'),
-            'employee' => $user->hasPermission('view_attachments'),
-            'admin'    => false,
+            'employee' => $user->hasPermission('view_attachments') && $sr->user_id !== $user->id,
+            'admin'    => false, // Only accessible if $isAdmin is true
         };
     }
 }
