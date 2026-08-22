@@ -67,7 +67,7 @@
             </label>
             <input type="text" name="search" value="{{ request('search') }}"
                    class="form-control form-control-sm"
-                   placeholder="{{ app()->isLocale('ar') ? 'رقم الطلب، العنوان، الوصف، البلد...' : 'Request no., title, description, country…' }}">
+                   placeholder="{{ __('Request no., title, description, country…') }}">
         </div>
 
         {{-- Status --}}

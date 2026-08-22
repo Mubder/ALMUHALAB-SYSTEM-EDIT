@@ -1128,7 +1128,7 @@
                                 @if($serviceRequest->client_phone)
                                 <div class="col-12">
                                     <span class="text-muted">{{ __('Phone') }}:</span>
-                                    {{ $serviceRequest->client_phone_code }} {{ $serviceRequest->client_phone }}
+                                    <bdi dir="ltr">{{ $serviceRequest->client_phone_code }} {{ $serviceRequest->client_phone }}</bdi>
                                 </div>
                                 @endif
                                 @if($serviceRequest->client_email)
@@ -1278,7 +1278,7 @@
                                     <div class="fw-500">{{ $companion['name'] ?? '—' }}</div>
                                     @if(!empty($companion['phone']))
                                     <div class="text-muted">
-                                        {{ $companion['phone_code'] ?? '' }} {{ $companion['phone'] }}
+                                        <bdi dir="ltr">{{ $companion['phone_code'] ?? '' }} {{ $companion['phone'] }}</bdi>
                                     </div>
                                     @endif
                                     @if(!empty($companion['email']))

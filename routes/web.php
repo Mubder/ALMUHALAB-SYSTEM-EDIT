@@ -21,7 +21,7 @@ Route::get('/terms', function () {
 
 // Language switcher
 Route::get('/lang/{locale}', function (string $locale) {
-    if (in_array($locale, ['en', 'ar'])) {
+    if (in_array($locale, ['en', 'ar', 'ru'])) {
         session(['locale' => $locale]);
     }
     return back();

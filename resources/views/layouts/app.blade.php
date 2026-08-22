@@ -1045,6 +1045,11 @@
                      style="font-size:.78rem;border-radius:4px;{{ app()->isLocale('en') ? 'background:rgba(255,255,255,.18)' : '' }}">
                      EN
                   </a>
+                  <a href="{{ route('lang.switch', 'ru') }}"
+                     class="nav-link px-2 py-1 {{ app()->isLocale('ru') ? 'text-white fw-bold' : '' }}"
+                     style="font-size:.78rem;border-radius:4px;{{ app()->isLocale('ru') ? 'background:rgba(255,255,255,.18)' : '' }}">
+                     RU
+                  </a>
               </div>
           </li>
 
