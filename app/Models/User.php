@@ -80,6 +80,11 @@ class User extends Authenticatable
         return str_contains($rName, 'admin') || str_contains($rName, 'founder');
     }
 
+    public function isFounder(): bool
+    {
+        return str_contains(strtolower($this->role->name ?? ''), 'founder');
+    }
+
     public function isOverseasAgent(): bool
     {
         $rName = strtolower($this->role->name ?? '');

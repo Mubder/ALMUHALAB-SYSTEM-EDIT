@@ -38,11 +38,16 @@ class StageCommentController extends Controller
 
         // Notify relevant parties
         $recipients = collect();
-        if ($serviceRequest->user && $serviceRequest->user->id !== $user->id) {
-            $recipients->push($serviceRequest->user);
-        }
-        if ($serviceRequest->assignedTo?->id && $serviceRequest->assignedTo->id !== $user->id) {
-            $recipients->push($serviceRequest->assignedTo);
+        if ($isOverseasAgent) {
+            // Overseas notes are Founder-eyes-only — notify Founders, never staff or the client
+            $recipients = User::whereHas('role', fn($q) => $q->where('name', 'like', '%founder%'))->get();
+        } else {
+            if ($serviceRequest->user && $serviceRequest->user->id !== $user->id) {
+                $recipients->push($serviceRequest->user);
+            }
+            if ($serviceRequest->assignedTo?->id && $serviceRequest->assignedTo->id !== $user->id) {
+                $recipients->push($serviceRequest->assignedTo);
+            }
         }
 
         foreach ($recipients->unique('id') as $recipient) {

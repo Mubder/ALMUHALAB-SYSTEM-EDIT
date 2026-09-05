@@ -68,15 +68,17 @@ class StageComment extends Model
         $isOverseasUser      = $user->isOverseasAgent();
 
         // 1. Comments/notes created by Overseas Agent:
-        // STRICTLY visible ONLY to Admins/Founders and the creator themselves
+        // STRICTLY visible ONLY to Founders and the creator themselves — Admins cannot see them
         if ($isCreatedByOverseas) {
-            return $isAdmin;
+            return $user->isFounder();
         }
 
         // 2. Overseas Agent viewing comments:
-        // Can see Admin & Employee comments
+        // CANNOT read staff or client notes — only his own notes (creator rule above).
+        // His permitted scope is the translated documents (staff attachments) plus
+        // writing his own Founder-Only note.
         if ($isOverseasUser) {
-            return $this->visibility === 'admin' || $this->visibility === 'employee' || $isAdmin;
+            return false;
         }
 
         // 3. Regular users viewing comments:

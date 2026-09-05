@@ -20,7 +20,6 @@ return new class extends Migration
             'view_attachments',
             'manage_attachments',
             'update_status',
-            'view_all_comments',
         ];
 
         $permissionIds = Permission::whereIn('name', $permissionNames)->pluck('id')->all();

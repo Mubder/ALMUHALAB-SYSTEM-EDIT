@@ -55,7 +55,7 @@ class PermissionSeeder extends Seeder
 
         $agent = Role::firstOrCreate(['name' => 'Overseas Agent']);
         $agentPerms = Permission::whereIn('name', [
-            'view_request', 'view_attachments', 'manage_attachments', 'update_status', 'view_all_comments'
+            'view_request', 'view_attachments', 'manage_attachments', 'update_status'
         ])->pluck('id')->all();
         $agent->permissions()->sync($agentPerms);
 

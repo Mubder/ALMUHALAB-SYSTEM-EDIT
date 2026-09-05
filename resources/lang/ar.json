@@ -661,5 +661,8 @@
     "Name": "الاسم",
     "Phone": "الهاتف",
     "Depart": "المغادرة",
-    "Return": "العودة"
+    "Return": "العودة",
+
+    "Note to Founder Only": "ملاحظة للمؤسس فقط",
+    "Founder Only": "للمؤسس فقط"
 }

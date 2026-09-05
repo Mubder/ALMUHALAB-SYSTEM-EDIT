@@ -575,5 +575,8 @@
     "Mark as Complete": "Отметить как выполненный",
     "Mark as Incomplete": "Отметить как незавершенный",
     "Request no., title, description, country…": "№ заявки, название, описание, страна…",
-    "Manage users, assign roles, and control access.": "Manage users, assign roles, and control access."
+    "Manage users, assign roles, and control access.": "Manage users, assign roles, and control access.",
+
+    "Note to Founder Only": "Заметка только основателю",
+    "Founder Only": "Только основателю"
 }

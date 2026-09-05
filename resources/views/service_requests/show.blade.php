@@ -465,7 +465,7 @@
                         <i class="bi bi-chat-left-text me-1"></i>{{ __('Comments') }}
                         <span class="badge bg-light text-dark border ms-1">{{ $comments->count() }}</span>
                     </h6>
-                    @if($canSeeInternal)
+                    @if($canSeeInternal && !$isOverseasAgent)
                     <div class="d-flex gap-2">
                         <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:.65rem">
                             <i class="bi bi-eye me-1"></i>{{ __('Client Visible') }}
@@ -490,11 +490,11 @@
                         </div>
                         <div class="flex-grow-1">
                             @if($isOverseasAgent)
-                            {{-- Overseas Agents can ONLY post Admin Only notes --}}
+                            {{-- Overseas Agents can ONLY post Founder Only notes --}}
                             <input type="hidden" name="visibility" value="admin">
                             <div class="mb-2">
                                 <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-1 px-2" style="font-size:.75rem">
-                                    <i class="bi bi-shield-lock me-1"></i>{{ __('Note to Admin Only') }}
+                                    <i class="bi bi-shield-lock me-1"></i>{{ __('Note to Founder Only') }}
                                 </span>
                             </div>
                             @elseif($canSeeInternal)
@@ -535,6 +535,11 @@
                 @forelse($comments as $comment)
                     @php
                         $vcfg     = $comment->visibilityConfig();
+                        // Notes authored by Overseas Agents are Founder-eyes-only — label accordingly
+                        $creatorRoleName = strtolower($comment->creator->role->name ?? '');
+                        if (str_contains($creatorRoleName, 'overseas') || str_contains($creatorRoleName, 'agent')) {
+                            $vcfg = ['label' => 'Founder Only', 'icon' => 'bi-shield-lock', 'color' => 'danger'];
+                        }
                         $isPublic = $comment->visibility === 'all';
                         $bgStyle  = $isPublic
                             ? 'background:rgba(22,163,74,.04);border:1px solid rgba(22,163,74,.15)'
