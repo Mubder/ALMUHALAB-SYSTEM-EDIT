@@ -17,7 +17,10 @@ class ServiceRequestController extends Controller
     {
         $user    = auth()->user();
         $isAdmin = $user->hasPermission('edit_request') || $user->hasPermission('manage_users');
-        $isStaff = $user->role_id !== null || $isAdmin || $user->hasPermission('transition_stage') || $user->hasPermission('view_all_requests');
+
+        // Clients (roles with only create/view permissions) are isolated to
+        // their own requests; staff roles see the full workspace.
+        $isStaff = $user->isStaff();
 
         $baseQuery = $isStaff
             ? ServiceRequest::query()
@@ -349,7 +352,8 @@ class ServiceRequestController extends Controller
         $user    = auth()->user();
         $isAdmin = $user->hasPermission('edit_request');
 
-        $query = $isAdmin
+        // Same isolation rule as index(): clients only export their own requests
+        $query = $user->isStaff()
             ? ServiceRequest::query()
             : ServiceRequest::where('user_id', $user->id);
 
@@ -438,16 +442,17 @@ class ServiceRequestController extends Controller
         }
     }
 
-    // Ensure staff/agents with view/edit/transition permissions can access requests
+    /**
+     * Full client isolation: a client may only reach requests they own.
+     * Staff (roles with workflow/edit/attachment permissions) and the
+     * assigned staff member can access any request. Note that
+     * view_request alone is NOT sufficient — every client role has it.
+     */
     private function authorizeAccess(ServiceRequest $serviceRequest): void
     {
         $user = auth()->user();
-        
-        // Staff/agents with view, edit, or transition permissions (or assigned user)
-        if ($user->hasPermission('view_request') || 
-            $user->hasPermission('edit_request') || 
-            $user->hasPermission('transition_stage') ||
-            $serviceRequest->assigned_to === $user->id) {
+
+        if ($user->isStaff() || $serviceRequest->assigned_to === $user->id) {
             return;
         }
 

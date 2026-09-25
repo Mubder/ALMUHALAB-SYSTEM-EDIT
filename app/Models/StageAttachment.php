@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class StageAttachment extends Model
 {
@@ -29,9 +28,13 @@ class StageAttachment extends Model
         return $this->belongsTo(User::class, 'uploaded_by')->withDefault(['name' => 'System']);
     }
 
+    /**
+     * Guarded download URL — access is verified server-side on every
+     * download; files are never exposed as direct public storage URLs.
+     */
     public function url(): string
     {
-        return Storage::disk('public')->url($this->file_path);
+        return route('stage-attachments.download', $this);
     }
 
     public function humanSize(): string

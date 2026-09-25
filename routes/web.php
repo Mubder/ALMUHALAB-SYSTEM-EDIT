@@ -179,6 +179,10 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{attachment}',[StageAttachmentController::class, 'destroy'])->name('destroy');
         });
 
+    Route::get('stage-attachments/{attachment}/download',
+        [StageAttachmentController::class, 'download'])
+        ->name('stage-attachments.download');
+
     Route::post('chunk-upload', [App\Http\Controllers\ChunkUploadController::class, 'upload'])->name('chunk-upload');
 
     // ── Follow-Ups ────────────────────────────────────────

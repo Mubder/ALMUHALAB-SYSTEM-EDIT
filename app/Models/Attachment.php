@@ -48,9 +48,11 @@ class Attachment extends Model
     /**
      * Server-side access check — must be called before every download.
      *
-     * all      → everyone
-     * employee → any staff with view_attachments
+     * all      → the owning client + staff (view_request)
+     * employee → staff with view_attachments (never the client)
      * admin    → manage_attachments, OR the specific required_permission if set
+     *
+     * Clients can never see files attached to another client's request.
      */
     public function isVisibleTo(User $user): bool
     {
@@ -58,32 +60,32 @@ class Attachment extends Model
             return true;
         }
 
+        $request = $this->serviceRequest;
+        $isOwner = $request && $request->user_id === $user->id;
+
         return match ($this->visibility) {
-            'all'      => true,
-            'employee' => $user->hasPermission('view_attachments'),
+            'all'      => $isOwner || ($user->isStaff() && $user->hasPermission('view_request')),
+            'employee' => ! $isOwner && $user->hasPermission('view_attachments'),
             'admin'    => $this->required_permission !== null
-                            ? ($user->role && $user->role->name === $this->required_permission)
+                            ? ($user->role && $user->role->name === $this->required_permission
+                                && ($isOwner || $user->isStaff()))
                             : false,
             default    => false,
         };
     }
 
     /**
-     * Returns a guarded download URL for non-public files,
-     * direct storage URL for public files.
+     * Returns the guarded download URL — every download goes through
+     * an authorization check, files are never exposed directly.
      */
     public function downloadUrl(): string
     {
-        if ($this->visibility === 'all') {
-            return asset('storage/' . $this->file_path);
-        }
-
         return route('attachments.download', $this);
     }
 
     public function url(): string
     {
-        return asset('storage/' . $this->file_path);
+        return $this->downloadUrl();
     }
 
     public function humanSize(): string

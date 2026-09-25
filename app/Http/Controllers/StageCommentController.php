@@ -12,13 +12,19 @@ class StageCommentController extends Controller
 {
     public function store(Request $request, ServiceRequest $serviceRequest)
     {
+        $user = auth()->user();
+
+        // Clients may only comment on their own requests
+        if (! $user->isStaff() && $serviceRequest->user_id !== $user->id) {
+            abort(403, 'You do not have access to this request.');
+        }
+
         $data = $request->validate([
             'content'    => 'required|string|max:2000',
             'visibility' => 'required|in:all,employee,admin',
             'parent_id'  => 'nullable|exists:stage_comments,id',
         ]);
 
-        $user = auth()->user();
         $isOverseasAgent = $user->role && str_contains(strtolower($user->role->name), 'overseas');
 
         if ($isOverseasAgent) {

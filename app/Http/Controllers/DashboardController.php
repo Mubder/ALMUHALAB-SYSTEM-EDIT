@@ -13,10 +13,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $user      = auth()->user();
-        $isClient  = !$user->hasPermission('transition_stage')
-                  && !$user->hasPermission('update_status')
-                  && !$user->hasPermission('manage_users');
+        $user     = auth()->user();
+        $isClient = $user->isClient();
 
         // ── Stats ────────────────────────────────────────────────────
         $baseQuery = $isClient
@@ -70,10 +68,17 @@ class DashboardController extends Controller
             : collect();
 
         // ── Recent activity ──────────────────────────────────────────
-        $recentActivity = ActivityLog::with([])
-            ->orderByDesc('created_at')
-            ->limit(10)
-            ->get();
+        // Clients only see activity on their own requests — never other
+        // clients' actions or data.
+        $recentActivity = $isClient
+            ? ActivityLog::where('subject_type', ServiceRequest::class)
+                ->whereIn('subject_id', (clone $baseQuery)->pluck('id'))
+                ->orderByDesc('created_at')
+                ->limit(10)
+                ->get()
+            : ActivityLog::orderByDesc('created_at')
+                ->limit(10)
+                ->get();
 
         $actorIds = $recentActivity->pluck('user')->filter()->unique();
         $actors   = User::whereIn('id', $actorIds)->pluck('name', 'id');

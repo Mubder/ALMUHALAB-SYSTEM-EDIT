@@ -60,6 +60,28 @@ class User extends Authenticatable
         return $this->role->permissions()->where('name', $permissionName)->exists();
     }
 
+    /**
+     * Permissions that mark a role as staff, i.e. allowed to work on
+     * service requests the user does not own. A role holding only
+     * client-level permissions (create_request / view_request) is a
+     * client role and gets full data isolation.
+     */
+    const STAFF_PERMISSIONS = [
+        'edit_request', 'delete_request', 'view_trash', 'restore_request',
+        'force_delete_request', 'manage_users', 'manage_followups',
+        'view_audit_log', 'update_status', 'manage_services',
+        'manage_service_catalog', 'manage_attachments', 'view_attachments',
+        'manage_pages', 'transition_stage', 'force_transition',
+        'manage_assignments', 'view_all_comments', 'view_all_requests',
+    ];
+
+    public function isStaff(): bool
+    {
+        if (!$this->role) return false;
+        $rolePermissions = $this->role->permissions()->pluck('name')->all();
+        return !empty(array_intersect($rolePermissions, self::STAFF_PERMISSIONS));
+    }
+
     public function assignRole($role)
     {
         if ($role instanceof Role) {
@@ -93,7 +115,8 @@ class User extends Authenticatable
 
     public function isClient(): bool
     {
-        $rName = strtolower($this->role->name ?? '');
-        return $rName === 'client' || (!$this->role_id && !$this->hasPermission('transition_stage'));
+        // Anyone who is not staff (no workflow/manage permissions) is a client,
+        // regardless of their role name — clients only ever see their own data.
+        return !$this->isStaff();
     }
 }

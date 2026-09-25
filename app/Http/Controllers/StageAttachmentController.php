@@ -125,6 +125,31 @@ class StageAttachmentController extends Controller
         return back()->with('success', $uploadedCount . ' file(s) uploaded successfully.');
     }
 
+    /**
+     * Guarded download — every stage attachment download is authorization
+     * checked; clients can only reach files on their own requests.
+     */
+    public function download(StageAttachment $attachment)
+    {
+        $serviceRequest = $attachment->serviceRequest;
+
+        abort_unless($serviceRequest, 404);
+
+        $user = auth()->user();
+
+        if (! $attachment->isVisibleTo($user, $serviceRequest)) {
+            abort(403, 'You do not have access to this file.');
+        }
+
+        $path = storage_path('app/public/' . $attachment->file_path);
+
+        if (! file_exists($path)) {
+            abort(404, 'File not found.');
+        }
+
+        return response()->download($path, $attachment->original_name);
+    }
+
     public function destroy(ServiceRequest $serviceRequest, StageAttachment $attachment)
     {
         abort_unless(auth()->user()->hasPermission('manage_attachments'), 403);
