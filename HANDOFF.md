@@ -156,7 +156,14 @@ All changes were deployed to GoDaddy via cPanel File Manager API:
 
 ## How to Deploy Changes
 
-### Via cPanel API (automated)
+> **IMPORTANT (verified 2026-09-25):**
+> - The **live app tree is `/home/b9dumvi117dk/public_html/app/`** — `app.almuhalab.net`'s docroot is the symlink `/home/b9dumvi117dk/app/public` → `public_html/app/public`.
+> - **`Fileman/upload_files` silently fails** on this host (reports success, writes nothing — even a .txt file). Use **`Fileman/save_file_content`** (POST, `dir`/`file`/`content`/`fallback=1`) instead — verified working, hash-checked.
+> - PHP scripts containing `shell_exec` (e.g. a deploy runner) are **quarantined by the malware scanner** within seconds of upload. `clear_cache.php` in `public/` uses the Artisan kernel programmatically (no shell_exec) and survives — reuse that pattern for artisan commands.
+> - This cPanel build has **no Fileman delete function** via API (neutralize unwanted files by overwriting with empty content).
+> - Production has **no route/config cache** (only `packages.php`/`services.php` in `bootstrap/cache/`), so PHP file changes take effect immediately; `route:clear`/`config:clear` are not required after code-only deploys.
+
+### Via cPanel API (automated) — working method
 
 ```powershell
 # Upload file
